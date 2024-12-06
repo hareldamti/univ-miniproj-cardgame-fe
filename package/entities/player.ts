@@ -9,6 +9,7 @@ export type Table = {
     Board: Hexagonal[],
     SettleLocation: SettleLocation[],
     RoadLocation: RoadLocation[],
+    Robber: Robber,
 }
 
 export type ScoringTable = {
@@ -16,12 +17,21 @@ export type ScoringTable = {
 }
 
 export type PlayerState = {
-    Settlements: Settlements[],
-    Cities: Cities[],
-    Roads: Roads[],
+    Settlements: number[], // IDs of placed settlements
+    Cities: number[], // IDs 
+    Roads: number[], // IDs 
+    genericHarbor: number[], // IDs 
+    specificHarbor: number[], // IDs
+    AvailableAssets: {
+        settlements: number, // Number of settlements left to build
+        cities: number, // Number of cities left to build
+        roads: number, // Number of roads left to build
+        genericHarbor: number, // Number of generic harbors left to build
+        specificHarbor: number, // Number of specific harbors left to build
+    },
     Resources: Resources[],
     DevelopmentCards: DevelopmentCard[], //cards that you can buy
-    SpecialCards: SpecialCard[],
+    SpecialCards: SpecialCard[], 
 }
 
 export type ScoringPlayers = {
@@ -49,28 +59,24 @@ export enum HexType {
 //Table
 export type SettleLocation = {
     id: number,
-    hexagonals: [number, number, number], // Exactly 3 adjacent hexagonals
-}
+    hexagonals: [number, number, number], // Adjacent hexes
+    owner: number | null, // Player ID or null if unoccupied
+    type: 'Settlement' | 'City' | null, // Settlement or upgraded to City
+};
 
 export type RoadLocation = {
     id: number,
-    hexagonals: [number, number], // Exactly 2 adjacent hexagonals
+    hexagonals: [number, number], // Adjacent hexes
+    owner: number | null, // Player ID or null if unoccupied
+    type: 'Settlement' | 'City' | null, // Settlement or upgraded to City
+};
+
+export type Robber = {
+    hexagonalId: number, // The ID of the hexagonal where the robber is located
 }
 
 
 //PlayerState
-export type Settlements = {
-
-};
-
-export type Cities = {
-
-};
-
-export type Roads = {
-
-};
-
 export type Resources = {
     lumber: number,
     brick: number,
@@ -90,7 +96,6 @@ export type VictoryCard = {
     type: 'Victory',
     points: 1, // Points worth by the card
 }
-
 
 
 export type SpecialCard = LongestArmyCard | LongestRoadCard;
