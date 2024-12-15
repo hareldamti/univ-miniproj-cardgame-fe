@@ -23,6 +23,7 @@ export type ScoringPlayers = {
 }
 
 export type Hexagonal = {
+    id: number,
     type: HexType,
     nuOfPoints: number,
 }
