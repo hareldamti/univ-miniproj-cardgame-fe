@@ -18,7 +18,7 @@ export type PlayerState = {
         cities: number, // Number of cities left to build
         roads: number, // Number of roads left to build
     },
-    Resources: Resources[],
+    Resources: Resources,
     DevelopmentCards: DevelopmentCard[], //cards that you can buy
     SpecialCards: SpecialCard[], 
 }
