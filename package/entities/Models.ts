@@ -40,13 +40,13 @@ export enum HexType {
 
 //Table
 export type SettleLocation = {
-    AdjHex: [Coords, Coords, Coords], // Adjacent hexes
+    adjHex: [Coords, Coords, Coords], // Adjacent hexes
     owner: number | null, // Player ID or null if unoccupied
     type: 'Settlement' | 'City' | null, // Settlement or upgraded to City
 };
 
 export type RoadLocation = {
-    AdjHex: [Coords, Coords, Coords], // Adjacent hexes
+    adjHex: [Coords, Coords], // Adjacent hexes
     owner: number | null, // Player ID or null if unoccupied
     type: 'Settlement' | 'City' | null, // Settlement or upgraded to City
 };
@@ -56,13 +56,14 @@ export type Robber = {
 }
 
 //PlayerState
-export type Resources = {
-    lumber: number,
-    brick: number,
-    ore: number,
-    grain: number,
-    wool: number,
-};
+export interface Resources {
+    lumber: number;
+    brick: number;
+    ore: number;
+    grain: number;
+    wool: number;
+    
+}
 
 export type DevelopmentCard = KnightCard | VictoryCard;
 

@@ -1,4 +1,4 @@
-import { DevelopmentCard, Resources, ScoringTable, SpecialCard, Table } from './Models';
+import { DevelopmentCard, Resources, RoadLocation, ScoringTable, SettleLocation, SpecialCard, Table } from './Models';
 
 export type GameState = {
     Table: Table,
@@ -10,9 +10,9 @@ export type GameState = {
 
 export type PlayerState = {
     name: string,
-    Settlements: number[], // IDs of placed settlements
+    Settlements: SettleLocation[], // IDs of placed settlements
     Cities: number[], // IDs of placed cities
-    Roads: number[], // IDs of placed roads
+    Roads: RoadLocation[], // all placed roads
     AvailableAssets: {
         settlements: number, // Number of settlements left to build
         cities: number, // Number of cities left to build
