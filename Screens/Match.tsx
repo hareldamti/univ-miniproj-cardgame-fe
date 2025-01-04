@@ -1,36 +1,22 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View, Text, Button, } from 'react-native';
+import Svg, { Rect, Circle, SvgUri } from 'react-native-svg';
+import Card from '../assets/Svg/card.svg';
 import * as ScreenOrientation from 'expo-screen-orientation';
 import { PropsWithChildren } from 'react'
-import { createContext, useContext, useState } from 'react';
-import { GameState, Table, PlayerState } from '../package/entities/State';
 
-export const GameContext = createContext<GameState | null>(null);
-
-export const useAppContext = (): GameState => {
-    const context = useContext(GameContext);
-    if (!context) {
-      throw new Error('useGameContext');
-    }
-    return context;
-};
+import { GameActionTypes, GameContextProvider, useGameContext } from '../State/GameState';
+import { initializeGame } from '../package/entities/Logic';
 
 export default function Match() {
   ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.LANDSCAPE);
   const scores = 0, board = 0, availableStructures = 0, resources = 0;
-  const initialGame: GameState = {
-    Table: {},
-    scoringTable: ScoringTable,
-    players: PlayerState[],
-  };
 
   return (
-    <GameContext.Provider value={initialGame}>
+    <GameContextProvider initialState={initializeGame(["a","b"])}>
     <View style={styles.container}>
       <Row span={1}>
         <Column span={1}><ScoringTable data={scores}/></Column>
       </Row>
-
       <Row span={5}>
         <Column span={6}>
           <Board data={board}/>
@@ -39,7 +25,6 @@ export default function Match() {
           <Structures data={availableStructures}/>
         </Column>
       </Row>
-
       <Row span={1}>
         <Column span={1}>
           <Menu/>
@@ -58,16 +43,57 @@ export default function Match() {
         </Column>
       </Row>
     </View>
-    </GameContext.Provider>
+    </GameContextProvider>
   );
 }
 
 
 interface ScoringTableProps { data: number };
-const ScoringTable = (props: ScoringTableProps) => <Frame/>
+const ScoringTable = (props: ScoringTableProps) => {
+  const {state, dispatch} = useGameContext();
+  return <Frame>
+    <Text>{state.players.map(p=>p.name).join(" ")}</Text>
+    <Button title="Press"
+      onPress={()=>dispatch({
+        type: GameActionTypes.Action2,
+        payload: {val: "barel"}
+      })}/>
+  </Frame>
+}
 
 interface BoardProps { data: number };
-const Board = (props: BoardProps) => <Frame/>
+const Board = (props: BoardProps) => {
+  const {state, dispatch} = useGameContext();
+  return <Frame>
+    <Text>Round {state.round}</Text>
+    <Button title="Press"
+      onPress={()=>dispatch({
+        type: GameActionTypes.Action1,
+        payload: {val: "barel"}
+      })}/>
+      <Svg style={{height: '100%'}}>
+        <Circle
+            cx="50"
+            cy="50"
+            r="45"
+            stroke="blue"
+            strokeWidth="2.5"
+            fill="green"
+          />
+          <Rect
+            x="25"
+            y="15"
+            width="70"
+            height="70"
+            stroke="red"
+            strokeWidth="2"
+            fill="yellow"
+          />
+
+      <Card/>
+      </Svg>
+  </Frame>
+}
 
 interface StructuresProps { data: number };
 const Structures = (props: StructuresProps) => <Frame/>
@@ -94,15 +120,8 @@ const Row = (props: PropsWithChildren<Span>): React.JSX.Element =>
 const Column = (props: PropsWithChildren<Span>): React.JSX.Element =>
 <View style={{...styles.col, ...{flex: props.span}}} >{props.children}</View>
 
-const Frame = () => <View style={styles.frame}></View>
+const Frame = (props: PropsWithChildren): React.JSX.Element => <View style={styles.frame}>{props.children}</View>
 
-
-const Circle = (props: any): React.JSX.Element => {
-  return <View style={{...styles.circle, ...props}} />;
-};
-const Rect = (props: any): React.JSX.Element => {
-  return <View style={{...styles.rectangle, ...props}} />;
-};
 
 const styles = StyleSheet.create({
   container: {

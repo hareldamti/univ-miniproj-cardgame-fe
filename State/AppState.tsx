@@ -1,5 +1,4 @@
 import { createContext, useContext } from 'react';
-import App from '../App';
 
 export type AppState = {
     userId: string | null,
