@@ -56,11 +56,6 @@ const ScoringTable = (props: ScoringTableProps) => {
   const {state, dispatch} = useGameContext();
   return <Frame>
     <Text>{state.players.map(p=>p.name).join(" ")}</Text>
-    <Button title="Press"
-      onPress={()=>dispatch({
-        type: GameActionTypes.Action2,
-        payload: {val: "barel"}
-      })}/>
   </Frame>
 }
 

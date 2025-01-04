@@ -6,14 +6,13 @@ interface Span {
 }
 
 let frameKey = 0;
+export const genIntKey = () => { frameKey+=1; return frameKey; }
 
-export const Row = (props: PropsWithChildren<Span>): React.JSX.Element => {frameKey += 1;
-    return <View key={frameKey} style={{...styles.row, ...{flex: props.span}}} >{props.children}</View>; }
+export const Row = (props: PropsWithChildren<Span>): React.JSX.Element => <View key={genIntKey()} style={{...styles.row, ...{flex: props.span}}} >{props.children}</View>;
 
-export const Column = (props: PropsWithChildren<Span>): React.JSX.Element => {frameKey += 1;
-return <View key={frameKey} style={{...styles.col, ...{flex: props.span, borderColor: "black", borderWidth: 1}}} >{props.children}</View>; }
+export const Column = (props: PropsWithChildren<Span>): React.JSX.Element => <View key={genIntKey()}  style={{...styles.col, ...{flex: props.span, borderColor: "black", borderWidth: 1}}} >{props.children}</View>;
 
-export const Frame = (props: PropsWithChildren): React.JSX.Element => {frameKey += 1; return <View key={frameKey} style={styles.frame}>{props.children}</View>; }
+export const Frame = (props: PropsWithChildren): React.JSX.Element => <View key={genIntKey()}  style={styles.frame}>{props.children}</View>;
 
 const styles = StyleSheet.create({
     container: {
