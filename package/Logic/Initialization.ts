@@ -1,6 +1,6 @@
 import { Coords, DevelopmentCard, Hexagonal, HexType, RoadLocation, Robber, SettleLocation, Table } from "../entities/Models";
 import { GameState, PlayerState } from "../entities/State";
-
+import { shuffle } from "./BoardUtils"
 // Initialize Game
 // returns new Game: GameState
 export function initializeGame(playersNames: string[]): GameState {
@@ -14,7 +14,7 @@ export function initializeGame(playersNames: string[]): GameState {
 }
 
 //Initialize Table
-function initializeTable(): Table {
+export function initializeTable(): Table {
     return {
         Board: initializeBoard(),
         SettleLocation: initializeSettleLocation(),

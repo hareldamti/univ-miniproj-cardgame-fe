@@ -2,7 +2,7 @@ import { Coords, DevelopmentCard, Hexagonal, HexType, RoadLocation, Robber, Sett
 import { GameState, PlayerState } from "../entities/State";
 
 // Function to shuffle an array
-function shuffle(array: any[]): any[] {
+export function shuffle(array: any[]): any[] {
     for (let i = array.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [array[i], array[j]] = [array[j], array[i]];
@@ -49,12 +49,12 @@ function isIntersectionAvailable(settleLocation: SettleLocation, gameState: Game
 }
 
 // Function to get available settlement locations based on rule of distance and if the locations owner is null
-function availableSettlements(gameState: GameState): SettleLocation[] {
+export function availableSettlements(gameState: GameState): SettleLocation[] {
     return gameState.Table.SettleLocation.filter(settleLocation => isIntersectionAvailable(settleLocation, gameState));
 }
 
 // Example usage in availableStructures function
-function availableStructures(playerState: PlayerState, gameState: GameState): SettleLocation[] {
+export function availableStructures(playerState: PlayerState, gameState: GameState): SettleLocation[] {
     if (gameState.round === 1 || 2) {
         return availableSettlements(gameState);
     } else {
@@ -123,7 +123,7 @@ function getAdjacent(playerState: PlayerState, gameState: GameState): RoadLocati
 }
 
 // Function to get available road locations for building for specific player
-function availableRoads(playerState: PlayerState, gameState: GameState): RoadLocation[] {
+export function availableRoads(playerState: PlayerState, gameState: GameState): RoadLocation[] {
     let availableRoadsFromAdjacanRoads: RoadLocation[] = getAdjacent(playerState, gameState);
     //get the null locations
     availableRoadsFromAdjacanRoads = availableRoadsFromAdjacanRoads.filter(location => location.owner === null);

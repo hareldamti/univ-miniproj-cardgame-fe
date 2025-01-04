@@ -1,5 +1,6 @@
 import { Coords, DevelopmentCard, Hexagonal, HexType, RoadLocation, Robber, SettleLocation, Table } from "../entities/Models";
 import { GameState, PlayerState } from "../entities/State";
+import { availableRoads, availableSettlements } from "./BoardUtils";
 
 //if the player can build a road
 function canBuildRoad(playerState: PlayerState, gameState: GameState): boolean {
