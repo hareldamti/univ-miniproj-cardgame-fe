@@ -11,7 +11,7 @@ export type GameState = {
 export type PlayerState = {
     name: string,
     Settlements: SettleLocation[], // IDs of placed settlements
-    Cities: number[], // IDs of placed cities
+    Cities: SettleLocation[], // IDs of placed cities
     Roads: RoadLocation[], // all placed roads
     AvailableAssets: {
         settlements: number, // Number of settlements left to build
@@ -22,3 +22,22 @@ export type PlayerState = {
     DevelopmentCards: DevelopmentCard[], //cards that you can buy
     SpecialCards: SpecialCard[], 
 }
+
+
+// todo: action types and state
+
+export enum PlayerActionType {
+    BuildCity,
+    DrawDevelopmentCard,
+    FinishStep
+}
+
+export type PlayerActionState =
+        {
+        type: PlayerActionType.BuildCity,
+        city: SettleLocation
+    } | {
+        type: PlayerActionType.DrawDevelopmentCard
+    } | {
+        type: PlayerActionType.FinishStep
+    }

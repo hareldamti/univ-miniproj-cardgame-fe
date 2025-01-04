@@ -5,7 +5,7 @@ import * as ScreenOrientation from 'expo-screen-orientation';
 import { PropsWithChildren } from 'react'
 
 import { GameActionTypes, GameContextProvider, useGameContext } from '../State/GameState';
-import { initializeGame } from '../package/entities/Logic';
+import { initializeGame } from '../package/Logic/Initialization';
 
 export default function Match() {
   ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.LANDSCAPE);
