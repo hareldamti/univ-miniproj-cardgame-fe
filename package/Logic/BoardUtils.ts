@@ -1,14 +1,7 @@
 import { Coords, DevelopmentCard, Hexagonal, HexType, RoadLocation, Robber, SettleLocation, Table } from "../entities/Models";
 import { GameState, PlayerState } from "../entities/State";
 
-// Function to shuffle an array
-function shuffle(array: any[]): any[] {
-    for (let i = array.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]];
-    }
-    return array;
-}
+
 
 /// 4TODO: Create ComputedBoardState ComputeBoardState- what excectly?
 // function computeBoardState {
@@ -39,7 +32,7 @@ function isIntersectionAvailable(settleLocation: SettleLocation, gameState: Game
     }
 
     // Check adjacent intersections
-    let adjacentIntersections = getAdjacentIntersections(settleLocation, gameState.Table.SettleLocation);
+    let adjacentIntersections = getAdjacentIntersections(settleLocation, gameState.Table.SettleLocations);
     for (let adjLocation of adjacentIntersections) {
         if (adjLocation.owner !== null) {
             return false;
@@ -49,8 +42,8 @@ function isIntersectionAvailable(settleLocation: SettleLocation, gameState: Game
 }
 
 // Function to get available settlement locations based on rule of distance and if the locations owner is null
-function availableSettlements(gameState: GameState): SettleLocation[] {
-    return gameState.Table.SettleLocation.filter(settleLocation => isIntersectionAvailable(settleLocation, gameState));
+export function availableSettlements(gameState: GameState): SettleLocation[] {
+    return gameState.Table.SettleLocations.filter(settleLocation => isIntersectionAvailable(settleLocation, gameState));
 }
 
 // Example usage in availableStructures function
@@ -75,7 +68,7 @@ function availableStructures(playerState: PlayerState, gameState: GameState): Se
 // Function to check if a road belongs to the player
 function isRoadOwnedByPlayer(coords: Coords[], playerState: PlayerState, gameState: GameState): boolean {
     return playerState.Roads.some(roadId => {
-        const road = gameState.Table.RoadLocation.find(location => location.adjHex === roadId.adjHex); //the road exists
+        const road = gameState.Table.RoadLocations.find(location => location.adjHex[0].row === roadId.adjHex[0].row && location.adjHex[0].col === roadId.adjHex[0].col && location.adjHex[1].row === roadId.adjHex[1].row && location.adjHex[1].col === roadId.adjHex[1].col);
         //compare to the coords
         return road && (
             (road.adjHex[0].row === coords[0].row && road.adjHex[0].col === coords[0].col && road.adjHex[1].row === coords[1].row && road.adjHex[1].col === coords[1].col) ||
@@ -90,7 +83,7 @@ function getAdjacent(playerState: PlayerState, gameState: GameState): RoadLocati
     const adjacentRoads: RoadLocation[] = [];
 
     playerState.Roads.forEach(playerRoad => {
-        const road = allRoadLocations.find(location => location.adjHex === playerRoad.adjHex);
+        const road = allRoadLocations.find((location: { adjHex: [Coords, Coords]; }) => location.adjHex === playerRoad.adjHex);
         if (road) {
             allRoadLocations.forEach(location => {
                 if (location.adjHex !== road.adjHex) {
@@ -123,7 +116,7 @@ function getAdjacent(playerState: PlayerState, gameState: GameState): RoadLocati
 }
 
 // Function to get available road locations for building for specific player
-function availableRoads(playerState: PlayerState, gameState: GameState): RoadLocation[] {
+export function availableRoads(playerState: PlayerState, gameState: GameState): RoadLocation[] {
     let availableRoadsFromAdjacanRoads: RoadLocation[] = getAdjacent(playerState, gameState);
     //get the null locations
     availableRoadsFromAdjacanRoads = availableRoadsFromAdjacanRoads.filter(location => location.owner === null);
@@ -132,15 +125,15 @@ function availableRoads(playerState: PlayerState, gameState: GameState): RoadLoc
     let availableRoadsFromAdjacanSettlements: RoadLocation[] = [];
     playerState.Settlements.forEach(settlement => {
         let coords = settlement.adjHex;
-        const roadLocation1 = gameState.Table.RoadLocation.find(location => location.adjHex[0] === coords[0] && location.adjHex[1] === coords[1]);
+        const roadLocation1 = gameState.Table.RoadLocation.find((location: { adjHex: Coords[]; }) => location.adjHex[0] === coords[0] && location.adjHex[1] === coords[1]);
         if (roadLocation1 && roadLocation1.owner === null) {
             availableRoadsFromAdjacanSettlements.push(roadLocation1);
         }
-        const roadLocation2 = gameState.Table.RoadLocation.find(location => location.adjHex[0] === coords[1] && location.adjHex[1] === coords[2]);
+        const roadLocation2 = gameState.Table.RoadLocation.find((location: { adjHex: Coords[]; }) => location.adjHex[0] === coords[1] && location.adjHex[1] === coords[2]);
         if (roadLocation2 && roadLocation2.owner === null) {
             availableRoadsFromAdjacanSettlements.push(roadLocation2);
         }
-        const roadLocation3 = gameState.Table.RoadLocation.find(location => location.adjHex[0] === coords[2] && location.adjHex[1] === coords[0]);
+        const roadLocation3 = gameState.Table.RoadLocation.find((location: { adjHex: Coords[]; }) => location.adjHex[0] === coords[2] && location.adjHex[1] === coords[0]);
         if (roadLocation3 && roadLocation3.owner === null) {
             availableRoadsFromAdjacanSettlements.push(roadLocation3);
         }

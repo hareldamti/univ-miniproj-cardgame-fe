@@ -2,8 +2,8 @@
 //GameState
 export type Table = {
     Board: Hexagonal[][],
-    SettleLocation: SettleLocation[],
-    RoadLocation: RoadLocation[],
+    SettleLocations: SettleLocation[],
+    RoadLocations: RoadLocation[],
     Robber: Robber,
 }
 
@@ -15,7 +15,6 @@ export type Coords = {
 export type ScoringTable = {
     ScoringPlayers: ScoringPlayers[], 
 }
-
 
 export type ScoringPlayers = {
     name: string,
@@ -48,7 +47,6 @@ export type SettleLocation = {
 export type RoadLocation = {
     adjHex: [Coords, Coords], // Adjacent hexes
     owner: number | null, // Player ID or null if unoccupied
-    type: 'Settlement' | 'City' | null, // Settlement or upgraded to City
 };
 
 export type Robber = {
@@ -77,10 +75,10 @@ export type VictoryCard = {
     points: 1, // Points worth by the card
 }
 
-export type SpecialCard = LongestArmyCard | LongestRoadCard;
+export type SpecialCard = LargestArmyCard | LongestRoadCard;
 
-export type LongestArmyCard = {
-    type: 'LongestArmy',
+export type LargestArmyCard = {
+    type: 'LargestArmy',
     points: 2, // Points worth by the card
 }
 

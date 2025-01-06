@@ -4,9 +4,11 @@ import { GameState, PlayerState } from "../entities/State";
 // Initialize Game
 // returns new Game: GameState
 export function initializeGame(playersNames: string[]): GameState {
+    const players = initializePlayers(playersNames, -1);
     return {
         Table: initializeTable(),
-        players: initializePlayers(playersNames),
+        players: players,
+        currentPlayer: 0,
         scoringTable: initializeScoringTable(playersNames), 
         stack: initializeStack(),
         round: 1,
@@ -17,8 +19,8 @@ export function initializeGame(playersNames: string[]): GameState {
 function initializeTable(): Table {
     return {
         Board: initializeBoard(),
-        SettleLocation: initializeSettleLocation(),
-        RoadLocation: initializeRoadLocation(),
+        SettleLocations: initializeSettleLocation(),
+        RoadLocations: initializeRoadLocation(),
         Robber: initializeRobber(),
     };
 }
@@ -108,20 +110,20 @@ function initializeRobber(): Robber {
 }
 
 // Initialize Players
-function initializePlayers(playersNames: string[]): PlayerState[] {
-    //will be changed after we will have the player's data
-    return [
-        initializePlayer("eilon"),
-        initializePlayer("harel"),
-        initializePlayer("paz"),
-        initializePlayer("yossi"),
-    ];
+function initializePlayers(playersNames: string[], currentPlayer: number): PlayerState[] {
+    //todo: input from the user
+    let ans = []
+    for (let player = inputPlayers[0]; player < playersNames.length; player++) {
+        ans.push(initializePlayer(player.name, currentPlayer+1));
+    }
+    return ans;
 }
 
 // Initialize Player
-function initializePlayer(name: string): PlayerState {
+function initializePlayer(name: string, currentPlayer: number): PlayerState {
     return {
-        name: name, //here we will have the player's name by its data
+        id: currentPlayer + 1,
+        name: name, //todo: input from the user
         Settlements: [],
         Cities: [],
         Roads: [],
@@ -138,9 +140,11 @@ function initializePlayer(name: string): PlayerState {
             wool: 0,
         },
         DevelopmentCards: [],
+        knightsPlayed: 0,
         SpecialCards: [],
     };
 }
+
 
 // Initialize ScoringTable
 function initializeScoringTable(players: string[]): Record<string, number> {
@@ -169,8 +173,12 @@ function initializeStack(): DevelopmentCard[] {
     return stack;
 }
 
-//initalize round
-function initializeRound(gameState: GameState): GameState {
-    gameState.round = 1;
-    return gameState;
+// Function to shuffle an array
+function shuffle(array: any[]): any[] {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
 }
+
