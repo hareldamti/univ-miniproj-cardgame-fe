@@ -9,12 +9,20 @@ export default () => {
     const {state, dispatch} = useGameContext();
     const table = initializeTable();
     return <Svg style={{ width: '100%', height: '100%' }} viewBox="0 0 600 640">
-        {Array.from<[number, Hexagonal[]]>(table.Board.entries()).map(row => { const [rowIdx, tableRow] = row;
-                return Array.from<[number, Hexagonal]>(tableRow.entries()).map(row => { const [colIdx, tableHex] = row; return <HexagonalComp key={genIntKey()} hexagonal={tableHex} x={Math.abs(rowIdx - 3) * 50.0 + colIdx * 100} y={rowIdx * 85.0 + 60} /> } )
-            }
-        ).flat(1)}
+        {
+            Array.from<[number, Hexagonal[]]>(table.Board.entries()).map(row => { const [rowIdx, tableRow] = row;
+                    return Array.from<[number, Hexagonal]>(tableRow.entries()).map(row => { const [colIdx, tableHex] = row; const [x, y] = hexCoords(rowIdx, colIdx); return <HexagonalComp key={genIntKey()} hexagonal={tableHex} x={x} y={y} /> } )
+                }
+            ).flat(1)
+        }
+        {
+        }
     </Svg>
   }
+
+// const playerIdToColor
+
+const hexCoords = (rowIdx: number, colIdx: number) => [Math.abs(rowIdx - 3) * 50.0 + colIdx * 100, rowIdx * 85.0 + 60];
 
 interface HexagonalCompProps {
     hexagonal: Hexagonal,
