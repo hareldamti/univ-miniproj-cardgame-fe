@@ -10,10 +10,10 @@ export default function ChooseRoom({ navigation }: NativeStackScreenProps<Naviga
   return (
     <View style={styles.container}>
       <StatusBar style="auto" hidden/>
-      <Text> ChooseRooms {appState.userId}</Text>
+      <Text> ChooseRooms {appState.username}</Text>
       <Button
               title="Login"
-              onPress={() => { appState.userId="12"; navigation.navigate('Match');}}
+              onPress={() => { appState.username="12"; navigation.navigate('Match');}}
       />
     </View>
   );

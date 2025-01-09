@@ -1,7 +1,7 @@
 import { createContext, useContext } from 'react';
 
 export type AppState = {
-    userId: string | null,
+    username: string | null,
     roomId: number | null,
 }
 

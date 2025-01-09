@@ -17,7 +17,7 @@ const Stack = createNativeStackNavigator<NavigatorParams>();
 
 export default () => (
   <NavigationContainer>
-    <Stack.Navigator initialRouteName="Match" screenOptions={{headerShown: false}}>
+    <Stack.Navigator initialRouteName="ChooseRoom" screenOptions={{headerShown: false}}>
       <Stack.Screen name="Login" component={Login} />
       <Stack.Screen name="ChooseRoom" component={ChooseRoom} />
       <Stack.Screen name="Match" component={Match}/>

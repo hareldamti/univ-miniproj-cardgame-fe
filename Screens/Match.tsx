@@ -10,10 +10,13 @@ import { initializeGame } from '../package/Logic/Initialization';
 
 import Board from "./Components/Board";
 
-export default function Match() {
-  useEffect(()=>{ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.LANDSCAPE)},[]);
+export default async function Match() {
+  useEffect(() => {
+    ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.LANDSCAPE);
+    // fetch -> initial gameState
+  },[]);
   const scores = 0, board = 0, availableStructures = 0, resources = 0;
-
+  
   return (
     <GameContextProvider initialState={initializeGame(["a","b"])}>
     <View style={styles.container}>

@@ -1,4 +1,4 @@
-import { DevelopmentCard, Resources, RoadLocation, ScoringTable, SettleLocation, SpecialCard, Table } from './Models';
+import { DevelopmentCard, Resources, EdgeLocation, ScoringTable, NodeLocation, SpecialCard, Table } from './Models';
 import { buildCity, buildRoad, buildSettlement, buyDevelopmentCard, finishStep, playDevelopmentCard, tradeResources } from '../Logic/Step';
 
 export type GameState = {
@@ -12,10 +12,10 @@ export type GameState = {
 
 export type PlayerState = {
     id: number,
-    name: string,
-    Settlements: SettleLocation[], // IDs of placed settlements
-    Cities: SettleLocation[], // IDs of placed cities
-    Roads: RoadLocation[], // all placed roads
+    username: string,
+    Settlements: NodeLocation[], // IDs of placed settlements
+    Cities: NodeLocation[], // IDs of placed cities
+    Roads: EdgeLocation[], // all placed roads
     AvailableAssets: {
         settlements: number, // Number of settlements left to build
         cities: number, // Number of cities left to build
@@ -27,8 +27,6 @@ export type PlayerState = {
     SpecialCards: SpecialCard[], 
 }
 
-
-// todo: action types and state
 export enum PlayerActionType {
     BuildSettlement,
     BuildCity,
@@ -40,9 +38,9 @@ export enum PlayerActionType {
 }
 
 export type PlayerActionState =
-    | { type: PlayerActionType.BuildSettlement, settleLocation: SettleLocation }
-    | { type: PlayerActionType.BuildCity, city: SettleLocation }
-    | { type: PlayerActionType.BuildRoad, roadLocation: RoadLocation }
+    | { type: PlayerActionType.BuildSettlement, NodeLocation: NodeLocation }
+    | { type: PlayerActionType.BuildCity, city: NodeLocation }
+    | { type: PlayerActionType.BuildRoad, EdgeLocation: EdgeLocation }
     | { type: PlayerActionType.DrawDevelopmentCard }
     | { type: PlayerActionType.PlayDevelopmentCard, card: DevelopmentCard }
     | { type: PlayerActionType.Trade, resources: Resources }
@@ -51,13 +49,13 @@ export type PlayerActionState =
 export function handlePlayerAction(action: PlayerActionState, gameState: GameState, playerState: PlayerState): GameState {
     switch (action.type) {
         case PlayerActionType.BuildSettlement:
-            buildSettlement(playerState, gameState, action.settleLocation);
+            buildSettlement(playerState, gameState, action.NodeLocation);
             break;
         case PlayerActionType.BuildCity:
             buildCity(playerState, gameState, action.city);
             break;
         case PlayerActionType.BuildRoad:
-            buildRoad(playerState, gameState, action.roadLocation);
+            buildRoad(playerState, gameState, action.EdgeLocation);
             break;
         case PlayerActionType.DrawDevelopmentCard:
             buyDevelopmentCard(playerState, gameState);
@@ -66,11 +64,10 @@ export function handlePlayerAction(action: PlayerActionState, gameState: GameSta
             playDevelopmentCard(playerState, gameState, action.card);
             break;
         case PlayerActionType.Trade:
-            //todo: trade
+            //TODO: trade screen
             tradeResources(playerState, action.resources);
             break;
         case PlayerActionType.FinishStep:
-            //todo: finish step
             finishStep(gameState);
             break;
     }

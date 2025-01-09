@@ -1,14 +1,8 @@
-// {
-//   "extends": "expo/tsconfig.base",
-//   "compilerOptions": {
-//     "strict": true
-//   }
-// }
-
-
 {
   "compilerOptions": {
-    "lib": ["es2016"],
-    // other options
-  }
+    "lib": [
+      "es2016"
+    ]
+  },
+  "extends": "expo/tsconfig.base"
 }

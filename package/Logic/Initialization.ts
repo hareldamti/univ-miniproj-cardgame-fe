@@ -1,15 +1,16 @@
-import { Coords, DevelopmentCard, Hexagonal, HexType, RoadLocation, Robber, SettleLocation, Table } from "../entities/Models";
+import { Coords, DevelopmentCard, Hexagonal, HexType, EdgeLocation, Robber, NodeLocation, Table } from "../entities/Models";
 import { GameState, PlayerState } from "../entities/State";
 import { shuffle } from "./BoardUtils"
 // Initialize Game
 // returns new Game: GameState
-export function initializeGame(playersNames: string[]): GameState {
-    const players = initializePlayers(playersNames, -1);
+
+export function initializeGame(usernames: string[]): GameState {
+    const players = initializePlayers(usernames);
     return {
         Table: initializeTable(),
         players: players,
         currentPlayer: 0,
-        scoringTable: initializeScoringTable(playersNames), 
+        scoringTable: initializeScoringTable(usernames), 
         stack: initializeStack(),
         round: 1,
     };
@@ -19,8 +20,9 @@ export function initializeGame(playersNames: string[]): GameState {
 export function initializeTable(): Table {
     return {
         Board: initializeBoard(),
-        SettleLocations: initializeSettleLocation(),
-        RoadLocations: initializeRoadLocation(),
+        Cities: initializeNodeLocation(),
+        Settlements: initializeNodeLocation(),
+        Roads: initializeEdgeLocation(),
         Robber: initializeRobber(),
     };
 }
@@ -92,16 +94,16 @@ function initializeBoard(): Hexagonal[][] {
     return board;
 }
 
-// Initialize settleLocation
-function initializeSettleLocation(): SettleLocation[] {
-    let settleLocations: SettleLocation[] = [];
-    return settleLocations;
+// Initialize NodeLocation
+function initializeNodeLocation(): NodeLocation[] {
+    let NodeLocations: NodeLocation[] = [];
+    return NodeLocations;
 }
 
-// Initialize RoadLocation
-function initializeRoadLocation(): RoadLocation[] {
-    let roadLocations: RoadLocation[] = [];
-    return roadLocations;
+// Initialize EdgeLocation
+function initializeEdgeLocation(): EdgeLocation[] {
+    let EdgeLocations: EdgeLocation[] = [];
+    return EdgeLocations;
 }
 
 // Initialize Robber
@@ -110,20 +112,20 @@ function initializeRobber(): Robber {
 }
 
 // Initialize Players
-function initializePlayers(playersNames: string[], currentPlayer: number): PlayerState[] {
+function initializePlayers(usernames: string[]): PlayerState[] {
     //todo: input from the user
     let ans = []
-    for (let player = inputPlayers[0]; player < playersNames.length; player++) {
-        ans.push(initializePlayer(player.name, currentPlayer+1));
+    for (let i = 0; i < usernames.length; i++) {
+        ans.push(initializePlayer(usernames[i], i));
     }
     return ans;
 }
 
 // Initialize Player
-function initializePlayer(name: string, currentPlayer: number): PlayerState {
+function initializePlayer(username: string, currentPlayer: number): PlayerState {
     return {
         id: currentPlayer + 1,
-        name: name, //todo: input from the user
+        username: username, //todo: input from the user
         Settlements: [],
         Cities: [],
         Roads: [],
@@ -173,12 +175,4 @@ function initializeStack(): DevelopmentCard[] {
     return stack;
 }
 
-// Function to shuffle an array
-function shuffle(array: any[]): any[] {
-    for (let i = array.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]];
-    }
-    return array;
-}
 

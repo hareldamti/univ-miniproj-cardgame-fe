@@ -1,9 +1,9 @@
-
 //GameState
 export type Table = {
     Board: Hexagonal[][],
-    SettleLocations: SettleLocation[],
-    RoadLocations: RoadLocation[],
+    Settlements: NodeLocation[],
+    Cities: NodeLocation[],
+    Roads: EdgeLocation[],
     Robber: Robber,
 }
 
@@ -38,13 +38,12 @@ export enum HexType {
 }
 
 //Table
-export type SettleLocation = {
+export type NodeLocation = {
     adjHex: [Coords, Coords, Coords], // Adjacent hexes
     owner: number | null, // Player ID or null if unoccupied
-    type: 'Settlement' | 'City' | null, // Settlement or upgraded to City
 };
 
-export type RoadLocation = {
+export type EdgeLocation = {
     adjHex: [Coords, Coords], // Adjacent hexes
     owner: number | null, // Player ID or null if unoccupied
 };
@@ -60,7 +59,6 @@ export interface Resources {
     ore: number;
     grain: number;
     wool: number;
-    
 }
 
 export type DevelopmentCard = KnightCard | VictoryCard;
@@ -86,5 +84,4 @@ export type LongestRoadCard = {
     type: 'LongestRoad',
     points: 2, // Points worth by the card
 }
-
 

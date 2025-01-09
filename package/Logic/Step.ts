@@ -1,27 +1,27 @@
-import { Coords, DevelopmentCard, Hexagonal, HexType, RoadLocation, Robber, SettleLocation, Table, SpecialCard } from "../entities/Models";
+import { Coords, DevelopmentCard, Hexagonal, HexType, EdgeLocation, Robber, NodeLocation, Table, SpecialCard } from "../entities/Models";
 import { KnightCard, LargestArmyCard, LongestRoadCard } from "../entities/Models";
 import { GameState, PlayerState } from "../entities/State";
 import { availableRoads, availableSettlements } from "./BoardUtils";
 
 
 //if the player can build a road
-function canBuildRoad(playerState: PlayerState, gameState: GameState, roadLocation: RoadLocation): boolean {
+function canBuildRoad(playerState: PlayerState, gameState: GameState, EdgeLocation: EdgeLocation): boolean {
     return playerState.Resources.lumber > 0 && playerState.Resources.brick > 0 && availableRoads(playerState, gameState).length > 0
     && playerState.AvailableAssets.roads > 0
-    && availableRoads(playerState, gameState).includes(roadLocation);
+    && availableRoads(playerState, gameState).includes(EdgeLocation);
 }
 
 //if the player can build a settlement
-function canBuildSettlement(playerState: PlayerState, gameState: GameState, settleLocation: SettleLocation): boolean {
+function canBuildSettlement(playerState: PlayerState, gameState: GameState, NodeLocation: NodeLocation): boolean {
     return playerState.Resources.lumber > 0 && playerState.Resources.brick > 0 && playerState.Resources.wool > 0 && playerState.Resources.grain > 0
     && availableSettlements(gameState).length > 0 && playerState.AvailableAssets.settlements > 0
-    && availableSettlements(gameState).includes(settleLocation);
+    && availableSettlements(gameState).includes(NodeLocation);
 }
 
 //if the player can build a city
-function canBuildCity(playerState: PlayerState, gameState: GameState, settleLocation: SettleLocation): boolean {
+function canBuildCity(playerState: PlayerState, gameState: GameState, NodeLocation: NodeLocation): boolean {
     return playerState.Resources.grain > 1 && playerState.Resources.ore > 2 && playerState.AvailableAssets.cities > 0
-    && availableSettlements(gameState).includes(settleLocation);
+    && availableSettlements(gameState).includes(NodeLocation);
 }
 
 //if the player can buy a development card
@@ -38,11 +38,10 @@ function canPlayDevelopmentCard(playerState: PlayerState, gameState: GameState):
  
 // TODO: actual action functions
 //function to build a road
-export function buildRoad(playerState: PlayerState, gameState: GameState, roadLocation: RoadLocation): void {
-    if (canBuildRoad(playerState, gameState, roadLocation)) {
-        roadLocation.owner = playerState.id;
-        gameState.Table.RoadLocations.push(roadLocation);
-        playerState.Roads.push(roadLocation);
+export function buildRoad(playerState: PlayerState, gameState: GameState, EdgeLocation: EdgeLocation): void {
+    if (canBuildRoad(playerState, gameState, EdgeLocation)) {
+        EdgeLocation.owner = playerState.id;
+        playerState.Roads.push(EdgeLocation);
         playerState.Resources.lumber--;
         playerState.Resources.brick--;
         playerState.AvailableAssets.roads--;
@@ -50,32 +49,26 @@ export function buildRoad(playerState: PlayerState, gameState: GameState, roadLo
 }
 
 //function to build a settlement
-export function buildSettlement(playerState: PlayerState, gameState: GameState, settleLocation: SettleLocation): void {
-    if (canBuildSettlement(playerState, gameState, settleLocation)) {
-        settleLocation.owner = playerState.id;
-        settleLocation.type = 'Settlement';
-        gameState.Table.SettleLocations.push(settleLocation);
-        playerState.Settlements.push(settleLocation);
+export function buildSettlement(playerState: PlayerState, gameState: GameState, NodeLocation: NodeLocation): void {
+    if (canBuildSettlement(playerState, gameState, NodeLocation)) {
+        NodeLocation.owner = playerState.id;
+        playerState.Settlements.push(NodeLocation);
         playerState.Resources.lumber--;
         playerState.Resources.brick--;
         playerState.Resources.wool--;
         playerState.Resources.grain--;
         playerState.AvailableAssets.settlements--;
-        settleLocation.type = 'Settlement';
     }
 }
 
 //function to build a city
-export function buildCity(playerState: PlayerState, gameState: GameState, settleLocation: SettleLocation): void {
-    if (canBuildCity(playerState, gameState, settleLocation)) {
-        settleLocation.owner = playerState.id;
-        settleLocation.type = 'City';
-        gameState.Table.SettleLocations.push(settleLocation);
-        playerState.Cities.push(settleLocation);
+export function buildCity(playerState: PlayerState, gameState: GameState, NodeLocation: NodeLocation): void {
+    if (canBuildCity(playerState, gameState, NodeLocation)) {
+        NodeLocation.owner = playerState.id;
+        playerState.Cities.push(NodeLocation);
         playerState.Resources.grain -= 2;
         playerState.Resources.ore -= 3;
         playerState.AvailableAssets.cities--;
-        settleLocation.type = 'City';
     }
 }
 
@@ -96,7 +89,7 @@ export function playDevelopmentCard(playerState: PlayerState, gameState: GameSta
         playerState.knightsPlayed++;
         if (playerState.knightsPlayed == 3) {
             playerState.SpecialCards.push({ type: 'LargestArmy' } as SpecialCard);
-            gameState.scoringTable[playerState.name] += 2;
+            gameState.scoringTable[playerState.username] += 2;
         }
         //todo: here the player has to choose the new hex for the robber
         gameState.Table.Robber.Hex = { row: 0, col: 0 };
@@ -129,3 +122,5 @@ export function finishStep(gameState: GameState): void {
         gameState.currentPlayer = (gameState.currentPlayer + 1) % gameState.players.length;
     }
 }
+
+function tradeResources()
