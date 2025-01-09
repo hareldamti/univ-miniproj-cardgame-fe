@@ -1,7 +1,14 @@
 import { Coords, DevelopmentCard, Hexagonal, HexType, RoadLocation, Robber, SettleLocation, Table } from "../entities/Models";
 import { GameState, PlayerState } from "../entities/State";
 
-
+// Function to shuffle an array
+export function shuffle(array: any[]): any[] {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+}
 
 /// 4TODO: Create ComputedBoardState ComputeBoardState- what excectly?
 // function computeBoardState {
@@ -47,7 +54,7 @@ export function availableSettlements(gameState: GameState): SettleLocation[] {
 }
 
 // Example usage in availableStructures function
-function availableStructures(playerState: PlayerState, gameState: GameState): SettleLocation[] {
+export function availableStructures(playerState: PlayerState, gameState: GameState): SettleLocation[] {
     if (gameState.round === 1 || 2) {
         return availableSettlements(gameState);
     } else {
