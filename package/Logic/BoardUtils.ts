@@ -79,7 +79,7 @@ export function availableStructures(playerState: PlayerState, gameState: GameSta
 // Function to check if a road belongs to the player
 function isRoadOwnedByPlayer(coords: Coords[], playerState: PlayerState, gameState: GameState): boolean {
     return playerState.Roads.some(roadId => {
-        const road = gameState.Table.EdgeLocations.find(location => location.adjHex[0].row === roadId.adjHex[0].row && location.adjHex[0].col === roadId.adjHex[0].col && location.adjHex[1].row === roadId.adjHex[1].row && location.adjHex[1].col === roadId.adjHex[1].col);
+        const road = gameState.Table.Roads.find(location => location.adjHex[0].row === roadId.adjHex[0].row && location.adjHex[0].col === roadId.adjHex[0].col && location.adjHex[1].row === roadId.adjHex[1].row && location.adjHex[1].col === roadId.adjHex[1].col);
         //compare to the coords
         return road && (
             (road.adjHex[0].row === coords[0].row && road.adjHex[0].col === coords[0].col && road.adjHex[1].row === coords[1].row && road.adjHex[1].col === coords[1].col) ||

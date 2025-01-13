@@ -89,7 +89,7 @@ export function playDevelopmentCard(playerState: PlayerState, gameState: GameSta
         playerState.knightsPlayed++;
         if (playerState.knightsPlayed == 3) {
             playerState.SpecialCards.push({ type: 'LargestArmy' } as SpecialCard);
-            gameState.scoringTable[playerState.username] += 2;
+            playerState.score += 2;
         }
         //todo: here the player has to choose the new hex for the robber
         gameState.Table.Robber.Hex = { row: 0, col: 0 };

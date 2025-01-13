@@ -1,5 +1,5 @@
 import { createContext, PropsWithChildren, Dispatch, useReducer, ReactNode, useContext } from 'react';
-import { GameState } from '../package/entities/State';
+import { GameState, UserState } from '../package/entities/State';
 import { EdgeLocation, NodeLocation } from '../package/entities/Models';
 import { getTableState } from '../package/Logic/BoardUtils';
 
@@ -7,17 +7,20 @@ export enum GameActionTypes {
     AddSettlement,
     AddCity,
     AddRoad,
+    
+    // User actions:
+    SetVisibleAvailableStructures,
 }
 
 type GameAction = 
     | { type: GameActionTypes.AddCity, payload: {playerId: number, location: NodeLocation} }
     | { type: GameActionTypes.AddSettlement, payload: {playerId: number, location: NodeLocation} }
     | { type: GameActionTypes.AddRoad, payload: {playerId: number, location: EdgeLocation} }
-
+    | { type: GameActionTypes.SetVisibleAvailableStructures, payload: {choice: 'Cities' | 'Settlements' | 'Roads' | null }}
 
 
 type GameContext = {
-    state: GameState,
+    gameState: GameState,
     dispatch: Dispatch<GameAction>;
 }
 
@@ -42,12 +45,15 @@ function gameReducer(state: GameState, action: GameAction): GameState {
             let updatedState = {...state, players: state.players.map(player => player.id == action.payload.playerId ? {...player, Roads: [...player.Roads, {...action.payload.location, owner: player.id}]} : player)}
             return {...updatedState, Table: getTableState(updatedState)};
         }
+        case GameActionTypes.SetVisibleAvailableStructures: {     
+            return {...state, user: {...state.user, availableVisible: action.payload.choice}};
+        }
     }
 }
 
 export const GameContextProvider: React.FC<GameStateProviderProps> = ({initialState, children}) => {
-  const [state, dispatch] = useReducer(gameReducer, initialState);
-  return <GameStateContext.Provider value={{state, dispatch}}>
+  const [gameState, dispatch] = useReducer(gameReducer, initialState);
+  return <GameStateContext.Provider value={{gameState, dispatch}}>
     {children}
   </GameStateContext.Provider>
 }

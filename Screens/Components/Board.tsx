@@ -3,26 +3,29 @@ import { genIntKey, PressableSvg } from '../../Utils/CompUtils'
 import { EdgeLocation, Hexagonal, HexType, NodeLocation } from '../../package/entities/Models'
 import { StyleSheet, View, Text, Button, } from 'react-native';
 import Svg, {Path} from 'react-native-svg';
-import { City, Road, Settlement } from './Sidebar';
+import { City, Road, Settlement } from './Structures';
 import { colorByPlayer } from '../../Utils/DesignUtils';
 import { useAppContext } from '../../State/AppState';
+import { useMemo } from 'react';
+import { availableRoads, availableStructures } from '../../package/Logic/BoardUtils';
 
 export default () => {
-    const {state, dispatch} = useGameContext();
+    const {gameState, dispatch} = useGameContext();
     const appState = useAppContext();
+    const available = {
+        Structures: useMemo(() => {return availableStructures(gameState.players[gameState.user.playerIdx], gameState)}, [gameState.players, gameState.user.availableVisible]),
+        Roads: useMemo(() => {return availableRoads(gameState.players[gameState.user.playerIdx], gameState)}, [gameState.players, gameState.user.availableVisible])
+    }
+
     return <Svg style={{ width: '100%', height: '100%' }} viewBox="0 0 600 640">
-        {
-            Array.from<[number, Hexagonal[]]>(state.Table.Board.entries()).map(row => { const [rowIdx, tableRow] = row;
+        
+        {   // Hexagonals
+            Array.from<[number, Hexagonal[]]>(gameState.Table.Board.entries()).map(row => { const [rowIdx, tableRow] = row;
                     return Array.from<[number, Hexagonal]>(tableRow.entries()).map(col => {
                         const [colIdx, tableHex] = col;
                         const [x, y] = hexCoords(rowIdx, colIdx);
                         return <HexagonalComp
                                     key={genIntKey()}
-                                    onPress={ () => {
-                                                if (!appState.utils) appState.utils = {coords: []};
-                                                appState.utils.coords.push({row: rowIdx, col: colIdx});
-                                                }
-                                            }
                                     hexagonal={tableHex}
                                     x={x}
                                     y={y}
@@ -30,20 +33,41 @@ export default () => {
                 }
             ).flat(1)
         }
-        {
-            state.Table.Cities.map(city => {
+        
+        {   // Existing
+            gameState.Table.Cities.map(city => {
                 let [x, y] = NodeCoords(city);
                 return <City key={genIntKey()} color={colorByPlayer(city.owner)} x={x} y={y}/>
             })
         }
         {
-            state.Table.Settlements.map(settlement => {
+            gameState.Table.Settlements.map(settlement => {
                 let [x, y] = NodeCoords(settlement);
                 return <Settlement key={genIntKey()} color={colorByPlayer(settlement.owner)} x={x} y={y}/>
             })
         }
-        {
-            state.Table.Roads.map(road => {
+        {   
+            gameState.Table.Roads.map(road => {
+                let [x, y, theta] = EdgeCoords(road);
+                return <Road key={genIntKey()} color={colorByPlayer(road.owner)} x={x} y={y} theta={theta}/>
+            })
+        }
+
+        {   // Available
+            gameState.user.availableVisible === 'Cities' && 
+            available.Structures.map(city => {
+                let [x, y] = NodeCoords(city);
+                return <City key={genIntKey()} color={colorByPlayer(city.owner)} x={x} y={y}/>
+            })
+        }
+        {   gameState.user.availableVisible === 'Settlements' && 
+            available.Structures.map(settlement => {
+                let [x, y] = NodeCoords(settlement);
+                return <Settlement key={genIntKey()} color={colorByPlayer(settlement.owner)} x={x} y={y}/>
+            })
+        }
+        {   gameState.user.availableVisible === 'Roads' && 
+            available.Roads.map(road => {
                 let [x, y, theta] = EdgeCoords(road);
                 return <Road key={genIntKey()} color={colorByPlayer(road.owner)} x={x} y={y} theta={theta}/>
             })

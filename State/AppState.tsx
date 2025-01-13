@@ -1,11 +1,11 @@
 import { createContext, useContext } from 'react';
 import { Coords } from '../package/entities/Models';
+import { io, Socket } from "socket.io-client";
 
 export interface AppState {
-    username: string | null,
-    roomId: number | null,
-    socketHandler: SocketHandler | null,
-    utils: {coords: Coords[]}
+    username?: string,
+    roomId?: number,
+    socketHandler?: SocketHandler,
 }
 
 export const AppContext = createContext<AppState | null>(null);
@@ -19,5 +19,5 @@ export const useAppContext = (): AppState => {
 };
 
 interface SocketHandler {
-  request: 2,
+  socket: Socket,
 }

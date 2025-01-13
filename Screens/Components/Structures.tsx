@@ -1,19 +1,18 @@
 import React from 'react';
-import { useGameContext } from '../../State/GameState';
+import { useGameContext, GameActionTypes } from '../../State/GameState';
 import { styles, Row, Column, Frame, genIntKey, PressableSvg } from '../../Utils/CompUtils'
 import { Hexagonal, HexType } from '../../package/entities/Models'
 import { StyleSheet, View, Text, Button } from 'react-native';
 import Svg, {Path} from 'react-native-svg';
 
 export default () => {
-    const {state, dispatch} = useGameContext();
-    console.log("scoring",state.scoringTable);
+    const {gameState, dispatch} = useGameContext();
     return <>
     <Row span={1}>
             <Svg
                 style={{ width: '100%', height: '100%' }}
                 viewBox="-50 -50 100 100"
-                onPress={()=>console.log("e")}>
+                onPress={ () => dispatch({type: GameActionTypes.SetVisibleAvailableStructures, payload: {choice: gameState.user.availableVisible == 'Settlements' ? null : 'Settlements'}}) }>
                 <Settlement/>
             </Svg>
     </Row>
@@ -21,7 +20,7 @@ export default () => {
             <Svg
                 style={{ width: '100%', height: '100%' }}
                 viewBox="-50 -50 100 100"
-                onPress={()=>console.log("e")}>
+                onPress={ () => dispatch({type: GameActionTypes.SetVisibleAvailableStructures, payload: {choice: gameState.user.availableVisible == 'Cities' ? null : 'Cities'}}) }>
                 <City/>
             </Svg>
     </Row>
@@ -29,7 +28,7 @@ export default () => {
             <Svg
                 style={{ width: '100%', height: '100%' }}
                 viewBox="-50 -50 100 100"
-                onPress={()=>console.log("e")}>
+                onPress={ () =>dispatch({type: GameActionTypes.SetVisibleAvailableStructures, payload: {choice: gameState.user.availableVisible == 'Roads' ? null : 'Roads'}}) }>
                 <Road/>
             </Svg>
     </Row>

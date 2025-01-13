@@ -1,8 +1,15 @@
 import { Coords, DevelopmentCard, Hexagonal, HexType, EdgeLocation, Robber, NodeLocation, Table } from "../entities/Models";
-import { GameState, PlayerState } from "../entities/State";
+import { GameState, PlayerState, UserState } from "../entities/State";
 import { shuffle } from "./BoardUtils"
 // Initialize Game
 // returns new Game: GameState
+
+export function initializeUser(): UserState {
+    return {
+        playerIdx: 0, // TODO: Change to -1
+        availableVisible: null
+    }
+}
 
 export function initializeGame(usernames: string[]): GameState {
     const players = initializePlayers(usernames);
@@ -10,9 +17,9 @@ export function initializeGame(usernames: string[]): GameState {
         Table: initializeTable(),
         players: players,
         currentPlayer: 0,
-        scoringTable: initializeScoringTable(usernames), 
         stack: initializeStack(),
         round: 1,
+        user: initializeUser()
     };
 }
 
@@ -144,19 +151,10 @@ function initializePlayer(username: string, currentPlayer: number): PlayerState 
         DevelopmentCards: [],
         knightsPlayed: 0,
         SpecialCards: [],
+        score: 0,
     };
 }
 
-
-// Initialize ScoringTable
-function initializeScoringTable(players: string[]): Record<string, number> {
-    let scoringTable: Record<string, number> = {};
-    players.forEach(player => {
-        scoringTable[player] = 0; // Initialize each player's score to 0
-        });
-        return scoringTable;
-    }
-   
 // Initialize Stack
 function initializeStack(): DevelopmentCard[] {
     let stack: DevelopmentCard[] = [];

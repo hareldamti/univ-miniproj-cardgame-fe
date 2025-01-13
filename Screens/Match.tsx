@@ -1,29 +1,28 @@
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { StyleSheet, View, Text, Button } from 'react-native';
-import Svg, { Rect, Circle, SvgUri, G } from 'react-native-svg';
-// import Card from '../assets/Svg/card.svg';
 import * as ScreenOrientation from 'expo-screen-orientation';
 import { Row, Column, Frame } from '../Utils/CompUtils'
 
-import { GameActionTypes, GameContextProvider, useGameContext } from '../State/GameState';
+import { GameContextProvider, useGameContext } from '../State/GameState';
 import { initializeGame } from '../package/Logic/Initialization';
 
 import Board from "./Components/Board";
 import ScoringTable from './Components/ScoringTable';
-import Sidebar from './Components/Sidebar';
+import Sidebar from './Components/Structures';
+import React from 'react';
 import { useAppContext } from '../State/AppState';
-import { Coords } from '../package/entities/Models';
+import { io, Socket } from 'socket.io-client';
+import { SOCKET_TAG_INIT, SOCKET_TAG_UPDATE, SOCKET_URL } from '../Utils/EnvConstsUtils';
 
 export default function Match() {
   useEffect(() => {
     ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.LANDSCAPE);
     // fetch -> initial gameState
   },[]);
-  const scores = 0, board = 0, availableStructures = 0, resources = 0;
   
   return (
-    <GameContextProvider initialState={initializeGame(["a","b"])}>
-
+    <GameContextProvider initialState={initializeGame(['a'])}>
+    <ServerLogic/>
     <View style={styles.container}>
       <Row span={1}>
         <ScoringTable/>
@@ -41,7 +40,7 @@ export default function Match() {
           <Menu/>
         </Column>
         <Column span={5}>
-          <Resources data={resources}/>
+          <Resources data={1}/>
         </Column>
         <Column span={1}>
           <DevelopmentCard/>
@@ -59,6 +58,24 @@ export default function Match() {
   );
 }
 
+const ServerLogic = () => {
+  const {gameState, dispatch} = useGameContext();
+  const appState = useAppContext();
+  // useEffect(() => {
+  //   appState.socketHandler = {
+  //     socket: io(SOCKET_URL, {
+  //     })
+  //   };
+  //   appState.socketHandler.socket.on(SOCKET_TAG_UPDATE, updateAction => dispatch(updateAction));
+  //   appState.socketHandler.socket.on(SOCKET_TAG_INIT, initAction => {
+  //     dispatch(initAction);
+  //     gameState.user.playerIdx = gameState.players.findIndex(player => player.username == appState.username);
+  //   });
+  // }
+  // , []);
+  return <></>
+}
+
 const ActionButton = ({title, onPress}) => {
   return <Button
     title={title}
@@ -69,7 +86,10 @@ const ActionButton = ({title, onPress}) => {
 const Menu = () => <Frame/>
 
 interface ResourcesProps { data: number };
-const Resources = (props: ResourcesProps) => <Frame/>
+const Resources = (props: ResourcesProps) => {
+  const {gameState, dispatch} = useGameContext();
+  return <Frame><Text>show {gameState.user.availableVisible}</Text></Frame>
+}
 
 const DevelopmentCard = () => {
   return <ActionButton
@@ -86,16 +106,17 @@ const Trade = () => {
 }
 
 const FinishStep = () => {
-  const {state, dispatch} = useGameContext();
-  const appState = useAppContext();
-  return <Button title="Add city" onPress={()=>{
-    dispatch({
-    type: GameActionTypes.AddRoad,
-    payload: {
-      playerId: 0,
-      location: {adjHex: ([...appState.utils.coords.splice(appState.utils.coords.length - 2)] as [Coords, Coords])}
-    }});
-  }}/>
+  // TODO: Delete
+  // const {gameState, dispatch} = useGameContext();
+  // const appState = useAppContext();
+  // return <Button title="Add city" onPress={()=>{
+  //   dispatch({
+  //   type: GameActionTypes.AddRoad,
+  //   payload: {
+  //     playerId: 0,
+  //     location: {adjHex: ([...appState.utils.coords.splice(appState.utils.coords.length - 2)] as [Coords, Coords])}
+  //   }});
+  // }}/>
   return <ActionButton
     title={"Finish\nStep"}
     onPress={()=>console.log("finish")}

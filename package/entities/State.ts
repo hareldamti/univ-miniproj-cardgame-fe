@@ -1,13 +1,20 @@
 import { DevelopmentCard, Resources, EdgeLocation, ScoringTable, NodeLocation, SpecialCard, Table } from './Models';
 import { buildCity, buildRoad, buildSettlement, buyDevelopmentCard, finishStep, playDevelopmentCard, tradeResources } from '../Logic/Step';
 
+
+
 export type GameState = {
     Table: Table,
     players: PlayerState[],
     currentPlayer: number,
-    scoringTable: Record<string, number>,
     stack: DevelopmentCard[],
     round: number,
+    user: UserState
+}
+
+export type UserState = {
+    playerIdx: number,
+    availableVisible: 'Cities' | 'Settlements' | 'Roads' | null 
 }
 
 export type PlayerState = {
@@ -25,6 +32,7 @@ export type PlayerState = {
     DevelopmentCards: DevelopmentCard[], //cards that you can buy
     knightsPlayed: number,
     SpecialCards: SpecialCard[], 
+    score: number
 }
 
 export enum PlayerActionType {
