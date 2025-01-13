@@ -154,7 +154,15 @@ export function availableRoads(playerState: PlayerState, gameState: GameState): 
     availableRoadsFromAdjacanRoads = availableRoadsFromAdjacanRoads.filter(location => location.owner === null);
 
     // Merge the two arrays 
-    return availableRoadsFromAdjacanRoads.concat(availableRoadsFromAdjacanSettlements);
+    //return availableRoadsFromAdjacanRoads.concat(availableRoadsFromAdjacanSettlements);
+
+    // for debugging
+    return playerState.Roads.map(road => ({
+        owner: playerState.id, adjHex: [
+        { row: road.adjHex[0].row, col: road.adjHex[0].col + 1 },
+        { row: road.adjHex[1].row, col: road.adjHex[1].col + 1 }
+        ] as [Coords, Coords]
+    }));
 }
 
 

@@ -10,3 +10,5 @@ export const colorByPlayer = (i: number) => {
             return "black";
     }
 }
+
+export const availableStuctureColor = "gray";

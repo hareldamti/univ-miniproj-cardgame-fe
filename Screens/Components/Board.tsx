@@ -1,12 +1,12 @@
-import { useGameContext } from '../../State/GameState';
+import { GameActionTypes, useGameContext } from '../../State/GameState';
 import { genIntKey, PressableSvg } from '../../Utils/CompUtils'
-import { EdgeLocation, Hexagonal, HexType, NodeLocation } from '../../package/entities/Models'
+import { Coords, EdgeLocation, Hexagonal, HexType, NodeLocation } from '../../package/entities/Models'
 import { StyleSheet, View, Text, Button, } from 'react-native';
 import Svg, {Path} from 'react-native-svg';
 import { City, Road, Settlement } from './Structures';
-import { colorByPlayer } from '../../Utils/DesignUtils';
+import { availableStuctureColor, colorByPlayer } from '../../Utils/DesignUtils';
 import { useAppContext } from '../../State/AppState';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { availableRoads, availableStructures } from '../../package/Logic/BoardUtils';
 
 export default () => {
@@ -14,8 +14,12 @@ export default () => {
     const appState = useAppContext();
     const available = {
         Structures: useMemo(() => {return availableStructures(gameState.players[gameState.user.playerIdx], gameState)}, [gameState.players, gameState.user.availableVisible]),
-        Roads: useMemo(() => {return availableRoads(gameState.players[gameState.user.playerIdx], gameState)}, [gameState.players, gameState.user.availableVisible])
+        Roads: useMemo(() => {console.log(availableRoads(gameState.players[gameState.user.playerIdx], gameState));return availableRoads(gameState.players[gameState.user.playerIdx], gameState)}, [gameState.players, gameState.user.availableVisible])
     }
+
+    // for debugging:
+    const [hex, setHex] = useState<Coords[]>([]);
+    //
 
     return <Svg style={{ width: '100%', height: '100%' }} viewBox="0 0 600 640">
         
@@ -29,6 +33,15 @@ export default () => {
                                     hexagonal={tableHex}
                                     x={x}
                                     y={y}
+                                    
+                                    // for debugging:
+                                    onPress={ () =>
+                                        setHex(hex => {
+                                            let updated = [...hex, {row: rowIdx, col: colIdx}];
+                                            if (updated.length > 1) dispatch({type: GameActionTypes.AddRoad, payload: {playerId: gameState.user.playerIdx, location: {adjHex: updated.splice(0) as [Coords, Coords], owner: gameState.user.playerIdx}}})
+                                            return updated;})
+                                    }
+
                                 /> } )
                 }
             ).flat(1)
@@ -57,19 +70,19 @@ export default () => {
             gameState.user.availableVisible === 'Cities' && 
             available.Structures.map(city => {
                 let [x, y] = NodeCoords(city);
-                return <City key={genIntKey()} color={colorByPlayer(city.owner)} x={x} y={y}/>
+                return <City key={genIntKey()} color={availableStuctureColor} x={x} y={y}/>
             })
         }
         {   gameState.user.availableVisible === 'Settlements' && 
             available.Structures.map(settlement => {
                 let [x, y] = NodeCoords(settlement);
-                return <Settlement key={genIntKey()} color={colorByPlayer(settlement.owner)} x={x} y={y}/>
+                return <Settlement key={genIntKey()} color={availableStuctureColor} x={x} y={y}/>
             })
         }
         {   gameState.user.availableVisible === 'Roads' && 
             available.Roads.map(road => {
                 let [x, y, theta] = EdgeCoords(road);
-                return <Road key={genIntKey()} color={colorByPlayer(road.owner)} x={x} y={y} theta={theta}/>
+                return <Road key={genIntKey()} color={availableStuctureColor} x={x} y={y} theta={theta}/>
             })
         }
     </Svg>

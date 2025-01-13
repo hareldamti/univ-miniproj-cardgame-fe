@@ -20,6 +20,7 @@ export interface PressableSvg {
     y?: number,
     color?: string,
     theta?: number,
+    scale?: number,
 }
 
 export const styles = StyleSheet.create({
