@@ -124,7 +124,7 @@ function initializePlayers(usernames: string[]): PlayerState[] {
 // Initialize Player
 function initializePlayer(username: string, currentPlayer: number): PlayerState {
     return {
-        id: currentPlayer + 1,
+        id: currentPlayer,
         username: username, //todo: input from the user
         Settlements: [],
         Cities: [],

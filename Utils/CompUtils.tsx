@@ -1,20 +1,28 @@
-import { StyleSheet, View, Text, Button, } from 'react-native';
+import { StyleSheet, View, Text, Button, GestureResponderEvent, } from 'react-native';
 import { PropsWithChildren } from 'react'
 
 interface Span {
-  span: number
+  span: number,
 }
 
 let frameKey = 0;
 export const genIntKey = () => { frameKey+=1; return frameKey; }
 
-export const Row = (props: PropsWithChildren<Span>): React.JSX.Element => <View key={genIntKey()} style={{...styles.row, ...{flex: props.span}}} >{props.children}</View>;
+export const Row = (props: PropsWithChildren<Span>): React.JSX.Element => <View style={{...styles.row, ...{flex: props.span}}} >{props.children}</View>;
 
-export const Column = (props: PropsWithChildren<Span>): React.JSX.Element => <View key={genIntKey()}  style={{...styles.col, ...{flex: props.span, borderColor: "black", borderWidth: 1}}} >{props.children}</View>;
+export const Column = (props: PropsWithChildren<Span>): React.JSX.Element => <View style={{...styles.col, ...{flex: props.span, borderColor: "black", borderWidth: 1}}} >{props.children}</View>;
 
-export const Frame = (props: PropsWithChildren): React.JSX.Element => <View key={genIntKey()}  style={styles.frame}>{props.children}</View>;
+export const Frame = (props: PropsWithChildren): React.JSX.Element => <View style={styles.frame}>{props.children}</View>;
 
-const styles = StyleSheet.create({
+export interface PressableSvg {
+    onPress?: (event: GestureResponderEvent) => void
+    x?: number,
+    y?: number,
+    color?: string,
+    theta?: number,
+}
+
+export const styles = StyleSheet.create({
     container: {
       flex: 1,
       backgroundColor: '#fff',
@@ -43,7 +51,9 @@ const styles = StyleSheet.create({
       width:'100%',
       height: '100%',
       borderWidth: 1,
+    },
+    textHeader: {
+
     }
-  
   });
   

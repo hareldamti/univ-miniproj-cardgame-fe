@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { StyleSheet, View, Text, Button } from 'react-native';
-import Svg, { Rect, Circle, SvgUri } from 'react-native-svg';
+import Svg, { Rect, Circle, SvgUri, G } from 'react-native-svg';
 // import Card from '../assets/Svg/card.svg';
 import * as ScreenOrientation from 'expo-screen-orientation';
 import { Row, Column, Frame } from '../Utils/CompUtils'
@@ -9,8 +9,12 @@ import { GameActionTypes, GameContextProvider, useGameContext } from '../State/G
 import { initializeGame } from '../package/Logic/Initialization';
 
 import Board from "./Components/Board";
+import ScoringTable from './Components/ScoringTable';
+import Sidebar from './Components/Sidebar';
+import { useAppContext } from '../State/AppState';
+import { Coords } from '../package/entities/Models';
 
-export default async function Match() {
+export default function Match() {
   useEffect(() => {
     ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.LANDSCAPE);
     // fetch -> initial gameState
@@ -19,16 +23,17 @@ export default async function Match() {
   
   return (
     <GameContextProvider initialState={initializeGame(["a","b"])}>
+
     <View style={styles.container}>
       <Row span={1}>
-        <Column span={1}><ScoringTable data={scores}/></Column>
+        <ScoringTable/>
       </Row>
       <Row span={10}>
         <Column span={5}>
           <Board/>
         </Column>
         <Column span={1}>
-          <Structures data={availableStructures}/>
+          <Sidebar/>  
         </Column>
       </Row>
       <Row span={1.5}>
@@ -45,37 +50,57 @@ export default async function Match() {
           <Trade/>
         </Column>
         <Column span={1}>
-          <Dice/>
+          <FinishStep/>
         </Column>
       </Row>
     </View>
+
     </GameContextProvider>
   );
 }
 
-
-interface ScoringTableProps { data: number };
-const ScoringTable = (props: ScoringTableProps) => {
-  const {state, dispatch} = useGameContext();
-  return <Frame>
-    <Text>{state.players.map(p=>p.name).join(" ")}</Text>
-  </Frame>
+const ActionButton = ({title, onPress}) => {
+  return <Button
+    title={title}
+    onPress={onPress}
+  />
 }
-
-
-interface StructuresProps { data: number };
-const Structures = (props: StructuresProps) => <Frame/>
 
 const Menu = () => <Frame/>
 
 interface ResourcesProps { data: number };
 const Resources = (props: ResourcesProps) => <Frame/>
 
-const DevelopmentCard = () => <Frame/>
+const DevelopmentCard = () => {
+  return <ActionButton
+    title={"Development\nCard"}
+    onPress={()=>console.log("dev card")}
+  />
+}
 
-const Trade = () => <Frame/>
+const Trade = () => {
+  return <ActionButton
+    title={"Trade"}
+    onPress={()=>console.log("trade")}
+  />
+}
 
-const Dice = () => <Frame/>
+const FinishStep = () => {
+  const {state, dispatch} = useGameContext();
+  const appState = useAppContext();
+  return <Button title="Add city" onPress={()=>{
+    dispatch({
+    type: GameActionTypes.AddRoad,
+    payload: {
+      playerId: 0,
+      location: {adjHex: ([...appState.utils.coords.splice(appState.utils.coords.length - 2)] as [Coords, Coords])}
+    }});
+  }}/>
+  return <ActionButton
+    title={"Finish\nStep"}
+    onPress={()=>console.log("finish")}
+  />
+}
 
 
 

@@ -123,4 +123,4 @@ export function finishStep(gameState: GameState): void {
     }
 }
 
-function tradeResources()
+export function tradeResources() {}

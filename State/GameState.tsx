@@ -1,14 +1,18 @@
 import { createContext, PropsWithChildren, Dispatch, useReducer, ReactNode, useContext } from 'react';
 import { GameState } from '../package/entities/State';
+import { EdgeLocation, NodeLocation } from '../package/entities/Models';
+import { getTableState } from '../package/Logic/BoardUtils';
 
 export enum GameActionTypes {
-    Action1,
-    Action2
+    AddSettlement,
+    AddCity,
+    AddRoad,
 }
 
 type GameAction = 
-    | { type: GameActionTypes.Action1, payload: {val: string} }
-    | { type: GameActionTypes.Action2, payload: {val: string} }
+    | { type: GameActionTypes.AddCity, payload: {playerId: number, location: NodeLocation} }
+    | { type: GameActionTypes.AddSettlement, payload: {playerId: number, location: NodeLocation} }
+    | { type: GameActionTypes.AddRoad, payload: {playerId: number, location: EdgeLocation} }
 
 
 
@@ -26,11 +30,17 @@ const GameStateContext = createContext<GameContext | null>(null);
 
 function gameReducer(state: GameState, action: GameAction): GameState {
     switch (action.type) {
-        case GameActionTypes.Action1: {
-            return {...state, players: state.players.map((player) => player.username == "harel" ? {...player, name: action.payload.val} : player)};
+        case GameActionTypes.AddSettlement: {
+            let updatedState = {...state, players: state.players.map(player => player.id == action.payload.playerId ? {...player, Settlements: [...player.Settlements, {...action.payload.location, owner: player.id}]} : player)}
+            return {...updatedState, Table: getTableState(updatedState)};
         } 
-        case GameActionTypes.Action2: {
-            return {...state, round: state.round + 1};
+        case GameActionTypes.AddCity: {
+            let updatedState = {...state, players: state.players.map(player => player.id == action.payload.playerId ? {...player, Cities: [...player.Cities, {...action.payload.location, owner: player.id}]} : player)}
+            return {...updatedState, Table: getTableState(updatedState)};
+        }
+        case GameActionTypes.AddRoad: {
+            let updatedState = {...state, players: state.players.map(player => player.id == action.payload.playerId ? {...player, Roads: [...player.Roads, {...action.payload.location, owner: player.id}]} : player)}
+            return {...updatedState, Table: getTableState(updatedState)};
         }
     }
 }

@@ -40,12 +40,12 @@ export enum HexType {
 //Table
 export type NodeLocation = {
     adjHex: [Coords, Coords, Coords], // Adjacent hexes
-    owner: number | null, // Player ID or null if unoccupied
+    owner?: number, // Player ID or null if unoccupied
 };
 
 export type EdgeLocation = {
     adjHex: [Coords, Coords], // Adjacent hexes
-    owner: number | null, // Player ID or null if unoccupied
+    owner?: number, // Player ID or null if unoccupied
 };
 
 export type Robber = {

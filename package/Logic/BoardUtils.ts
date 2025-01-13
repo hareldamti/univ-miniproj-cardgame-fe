@@ -1,4 +1,3 @@
-import Board from "../../Screens/Components/Board";
 import { Coords, DevelopmentCard, Hexagonal, HexType, EdgeLocation, Robber, NodeLocation, Table } from "../entities/Models";
 import { GameState, PlayerState } from "../entities/State";
 
@@ -11,7 +10,7 @@ export function shuffle(array: any[]): any[] {
     return array;
 }
 
-function updateTableState(gameState: GameState) {
+export function getTableState(gameState: GameState) {
     return {
         ...gameState.Table,
         Cities: gameState.players.map(player => player.Cities).flat(1),

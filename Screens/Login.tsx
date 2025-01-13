@@ -13,7 +13,7 @@ export const Login = ({ navigation }: NativeStackScreenProps<NavigatorParams, 'L
       <Text> Login </Text>
       <Button
         title="Login"
-        onPress={() => { appState.userId="12"; navigation.navigate('ChooseRoom');}}
+        onPress={() => { appState.username="12"; navigation.navigate('ChooseRoom');}}
       />
     </View>
   );
