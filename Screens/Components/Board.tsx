@@ -38,7 +38,9 @@ export default () => {
                                     onPress={ () =>
                                         setHex(hex => {
                                             let updated = [...hex, {row: rowIdx, col: colIdx}];
-                                            if (updated.length > 1) dispatch({type: GameActionTypes.AddRoad, payload: {playerId: gameState.user.playerIdx, location: {adjHex: updated.splice(0) as [Coords, Coords], owner: gameState.user.playerIdx}}})
+                                            if (updated.length == 2) dispatch({type: GameActionTypes.AddRoad, payload: {playerId: gameState.user.playerIdx, location: {adjHex: updated.splice(0) as [Coords, Coords], owner: gameState.user.playerIdx}}})
+                                            //if (updated.length == 3) dispatch({type: GameActionTypes.AddSettlement, payload: {playerId: gameState.user.playerIdx, location: {adjHex: updated.splice(0) as [Coords, Coords, Coords], owner: gameState.user.playerIdx}}})
+                                            //if (updated.length == 3) dispatch({type: GameActionTypes.AddCity, payload: {playerId: gameState.user.playerIdx, location: {adjHex: updated.splice(0) as [Coords, Coords, Coords], owner: gameState.user.playerIdx}}})
                                             return updated;})
                                     }
 
