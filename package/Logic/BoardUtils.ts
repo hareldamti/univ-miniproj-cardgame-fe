@@ -67,26 +67,26 @@ export function availableStructures(playerState: PlayerState, gameState: GameSta
         const arrayRuleOfDistance = availableSettlements(gameState);
         // If there is a road that belongs to the player that is adjacent to the location
          // Check if one of the coords of each available settlement is a road that belongs to the player
-         arrayRuleOfDistance.forEach(NodeLocation => {
-            if (NodeLocation.adjHex.some(hex => isRoadOwnedByPlayer([hex], playerState, gameState))) {
-                availableSetWithRoads.push(NodeLocation);
-            }
-        });
+        arrayRuleOfDistance.forEach(NodeLocation => RoadsOwnedByPlayer(availableSetWithRoads, NodeLocation, playerState, gameState));
         return availableSetWithRoads;
     }
 }
 
 // Function to check if a road belongs to the player
-function isRoadOwnedByPlayer(coords: Coords[], playerState: PlayerState, gameState: GameState): boolean {
-    return playerState.Roads.some(roadId => {
-        const road = gameState.Table.Roads.find(location => location.adjHex[0].row === roadId.adjHex[0].row && location.adjHex[0].col === roadId.adjHex[0].col && location.adjHex[1].row === roadId.adjHex[1].row && location.adjHex[1].col === roadId.adjHex[1].col);
-        //compare to the coords
-        return road && (
-            (road.adjHex[0].row === coords[0].row && road.adjHex[0].col === coords[0].col && road.adjHex[1].row === coords[1].row && road.adjHex[1].col === coords[1].col) ||
-            (road.adjHex[0].row === coords[1].row && road.adjHex[0].col === coords[1].col && road.adjHex[1].row === coords[0].row && road.adjHex[1].col === coords[0].col)
-        );
-    });
+function RoadsOwnedByPlayer(availableSetWithRoads: NodeLocation[], nodeLocation: NodeLocation, playerState: PlayerState, gameState: GameState): void {
+    const edgeLocations: EdgeLocation[] = [
+        { adjHex: [nodeLocation.adjHex[0], nodeLocation.adjHex[1]] },
+        { adjHex: [nodeLocation.adjHex[1], nodeLocation.adjHex[2]] },
+        { adjHex: [nodeLocation.adjHex[2], nodeLocation.adjHex[0]] }
+    ];
+   
+    for (let edgeLocation of edgeLocations) {
+        if (edgeLocation.owner === playerState.id) {
+            availableSetWithRoads.push(nodeLocation);
+        }
+    }
 }
+
 
 // Function to get adjacent road locations for a specific player
 function getAdjacent(playerState: PlayerState, gameState: GameState): EdgeLocation[] {
