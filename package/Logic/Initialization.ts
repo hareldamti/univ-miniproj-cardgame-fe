@@ -1,5 +1,5 @@
-import { Coords, DevelopmentCard, Hexagonal, HexType, EdgeLocation, Robber, NodeLocation, Table } from "../entities/Models";
-import { GameState, PlayerState, UserState } from "../entities/State";
+import { Coords, DevelopmentCard, Hexagonal, HexType, EdgeLocation, Robber, NodeLocation, Table } from "../Entities/Models";
+import { GameState, PlayerState, UserState } from "../Entities/State";
 import { shuffle } from "./BoardLogic"
 // Initialize Game
 // returns new Game: GameState

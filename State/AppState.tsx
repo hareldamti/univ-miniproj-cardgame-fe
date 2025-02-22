@@ -1,5 +1,5 @@
 import { createContext, useContext } from 'react';
-import { Coords } from '../package/entities/Models';
+import { Coords } from '../package/Entities/Models';
 import { io, Socket } from "socket.io-client";
 
 export interface AppState {
@@ -8,7 +8,7 @@ export interface AppState {
     socketHandler?: SocketHandler,
 }
 
-export const AppContext = createContext<AppState | null>(null);
+export const AppContext = createContext<AppState>({});
 
 export const useAppContext = (): AppState => {
     const context = useContext(AppContext);

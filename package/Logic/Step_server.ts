@@ -1,9 +1,36 @@
-import { Coords, DevelopmentCard, Hexagonal, HexType, EdgeLocation, Robber, NodeLocation, Table, SpecialCard } from "../entities/Models";
-import { KnightCard, LargestArmyCard, LongestRoadCard } from "../entities/Models";
-import { GameState, PlayerState } from "../entities/State";
+import { Coords, DevelopmentCard, Hexagonal, HexType, EdgeLocation, Robber, NodeLocation, Table, SpecialCard } from "../Entities/Models";
+import { KnightCard, LargestArmyCard, LongestRoadCard } from "../Entities/Models";
+import { GameState, PlayerState } from "../Entities/State";
 import { availableRoads, availableSettlements } from "./BoardLogic";
 
 
+export function handlePlayerAction(action: PlayerAction, userAction): GameState {
+    switch (action.type) {
+        case PlayerActionType.BuildSettlement:
+            buildSettlement(playerState, gameState, action.NodeLocation);
+            break;
+        case PlayerActionType.BuildCity:
+            buildCity(playerState, gameState, action.city);
+            break;
+        case PlayerActionType.BuildRoad:
+            buildRoad(playerState, gameState, action.EdgeLocation);
+            break;
+        case PlayerActionType.DrawDevelopmentCard:
+            buyDevelopmentCard(playerState, gameState);
+            break;
+        case PlayerActionType.PlayDevelopmentCard:
+            playDevelopmentCard(playerState, gameState, action.card);
+            break;
+        case PlayerActionType.Trade:
+            //TODO: trade screen
+            tradeResources(playerState, action.resources);
+            break;
+        case PlayerActionType.FinishStep:
+            finishStep(gameState);
+            break;
+    }
+    return gameState;
+}
 //if the player can build a road
 function canBuildRoad(playerState: PlayerState, gameState: GameState, EdgeLocation: EdgeLocation): boolean {
     return playerState.Resources.lumber > 0 && playerState.Resources.brick > 0 && availableRoads(playerState, gameState).length > 0

@@ -1,9 +1,11 @@
 import React from 'react';
-import { useGameContext, GameActionTypes } from '../../State/GameState';
+import { useGameContext } from '../../State/GameState';
+
 import { styles, Row, Column, Frame, genIntKey, PressableSvg } from '../../Utils/CompUtils'
-import { Hexagonal, HexType } from '../../package/entities/Models'
+import { Hexagonal, HexType } from '../../package/Entities/Models'
 import { StyleSheet, View, Text, Button } from 'react-native';
 import Svg, {Path} from 'react-native-svg';
+import { GameActionTypes } from '../../package/Entities/GameActions';
 
 export default () => {
     const {gameState, dispatch} = useGameContext();

@@ -1,5 +1,5 @@
-import { Coords, DevelopmentCard, Hexagonal, HexType, EdgeLocation, Robber, NodeLocation, Table } from "../entities/Models";
-import { GameState, PlayerState } from "../entities/State";
+import { Coords, DevelopmentCard, Hexagonal, HexType, EdgeLocation, Robber, NodeLocation, Table } from "../Entities/Models";
+import { GameState, PlayerState } from "../Entities/State";
 
 export const isEdgeLegal = (edge: EdgeLocation): boolean => {
     if (edge.adjHex[0].row == edge.adjHex[1].row && (edge.adjHex[1].row == 0 || edge.adjHex[1].row == 6)) return false;

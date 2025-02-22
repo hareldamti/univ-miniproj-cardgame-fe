@@ -2,8 +2,7 @@ import { useEffect, useMemo } from 'react';
 import { StyleSheet, View, Text, Button } from 'react-native';
 import * as ScreenOrientation from 'expo-screen-orientation';
 import { Row, Column, Frame } from '../Utils/CompUtils'
-
-import { GameActionTypes, GameContextProvider, useGameContext, validateActions } from '../State/GameState';
+import { GameContextProvider, useGameContext } from '../State/GameState';
 import { initializeGame } from '../package/Logic/Initialization';
 
 import Board from "./Components/Board";
@@ -15,8 +14,10 @@ import Trade from './Components/Trade';
 import React from 'react';
 import { useAppContext } from '../State/AppState';
 import { io, Socket } from 'socket.io-client';
-import { SOCKET_TAG_INIT, SOCKET_TAG_UPDATE, SOCKET_URL } from '../Utils/EnvConstsUtils';
+import { emitAction, SOCKET_URL } from '../Utils/ClientUtils';
 import { availableRoads } from '../package/Logic/BoardLogic';
+import { validateActions } from '../package/Entities/GameActions';
+import { PlayerActionType } from '../package/Entities/PlayerActions';
 
 
 
@@ -65,14 +66,16 @@ export default function Match() {
 const ServerLogic = () => {
   const {gameState, dispatch} = useGameContext();
   const appState = useAppContext();
-  false && useEffect(() => {
+  useEffect(() => {
     ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.LANDSCAPE);
     appState.socketHandler = {
       socket: io(SOCKET_URL, {
+        reconnectionAttempts: 3,
       })
     };
-    appState.socketHandler.socket.on(SOCKET_TAG_UPDATE, updateActions => validateActions(updateActions) && dispatch(updateActions));
-    appState.socketHandler.socket.on(SOCKET_TAG_INIT, initActions => {
+    //appState.socketHandler.socket.on('connect_error', () => {console.log("Failed to connect to server"); appState.socketHandler.socket.disconnect();})
+    appState.socketHandler.socket.on(SocketTags.UPDATE, updateActions => validateActions(updateActions) && dispatch(updateActions));
+    appState.socketHandler.socket.on(SocketTags.INIT, initActions => {
       validateActions(initActions) && dispatch(initActions);
       gameState.user.playerIdx = gameState.players.findIndex(player => player.username == appState.username);
     });
@@ -109,6 +112,7 @@ const TradeButton = () => {
 }
 
 const FinishStep = () => {
+  const appState = useAppContext();
   // TODO: Delete
   // const {gameState, dispatch} = useGameContext();
   // const appState = useAppContext();
@@ -121,8 +125,8 @@ const FinishStep = () => {
   //   }});
   // }}/>
   return <ActionButton
-    title={"Finish\nStep"}
-    onPress={()=>console.log("finish")}
+    title={"Finish Step"}
+    onPress={()=> emitAction(appState, {type: PlayerActionType.FinishStep})}
   />
 }
 

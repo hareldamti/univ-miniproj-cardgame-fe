@@ -1,6 +1,6 @@
-import { GameActionTypes, useGameContext } from '../../State/GameState';
+import { useGameContext } from '../../State/GameState';
 import { genIntKey, PressableSvg } from '../../Utils/CompUtils'
-import { Coords, EdgeLocation, Hexagonal, HexType, NodeLocation } from '../../package/entities/Models'
+import { Coords, EdgeLocation, Hexagonal, HexType, NodeLocation } from '../../package/Entities/Models'
 import { StyleSheet, View, Text, Button, } from 'react-native';
 import Svg, {Path} from 'react-native-svg';
 import { City, Road, Settlement } from './Structures';
@@ -9,6 +9,7 @@ import { useAppContext } from '../../State/AppState';
 import { useMemo, useState } from 'react';
 import { availableRoads, availableStructures } from '../../package/Logic/BoardLogic';
 import { createEdge, createNode, isEdgeLegal } from '../../package/Logic/BoardUtils';
+import { GameActionTypes } from '../../package/Entities/GameActions';
 
 export default () => {
     const {gameState, dispatch} = useGameContext();
