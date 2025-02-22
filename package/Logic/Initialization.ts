@@ -1,6 +1,6 @@
 import { Coords, DevelopmentCard, Hexagonal, HexType, EdgeLocation, Robber, NodeLocation, Table } from "../entities/Models";
 import { GameState, PlayerState, UserState } from "../entities/State";
-import { shuffle } from "./BoardUtils"
+import { shuffle } from "./BoardLogic"
 // Initialize Game
 // returns new Game: GameState
 

@@ -39,11 +39,13 @@ export enum HexType {
 
 //Table
 export type NodeLocation = {
+    id: string,
     adjHex: [Coords, Coords, Coords], // Adjacent hexes
     owner?: number, // Player ID or null if unoccupied
 };
 
 export type EdgeLocation = {
+    id: string,
     adjHex: [Coords, Coords], // Adjacent hexes
     owner?: number, // Player ID or null if unoccupied
 };

@@ -1,7 +1,7 @@
 import { Coords, DevelopmentCard, Hexagonal, HexType, EdgeLocation, Robber, NodeLocation, Table, SpecialCard } from "../entities/Models";
 import { KnightCard, LargestArmyCard, LongestRoadCard } from "../entities/Models";
 import { GameState, PlayerState } from "../entities/State";
-import { availableRoads, availableSettlements } from "./BoardUtils";
+import { availableRoads, availableSettlements } from "./BoardLogic";
 
 
 //if the player can build a road

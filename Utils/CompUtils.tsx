@@ -1,4 +1,4 @@
-import { StyleSheet, View, Text, Button, GestureResponderEvent, } from 'react-native';
+import { StyleSheet, View, Text, Button, GestureResponderEvent, PressableProps, } from 'react-native';
 import { PropsWithChildren } from 'react'
 
 interface Span {
@@ -55,6 +55,18 @@ export const styles = StyleSheet.create({
     },
     textHeader: {
 
+    },
+    floatingWindow: {
+      position: 'absolute',
+      top: '50%',
+      left: '50%',
+      transform: 'translate(-50%, -50%)',
+      borderColor: 'red',
+      borderWidth: 5,
+      zIndex: 1,
+      width: '80%',
+      height: '80%',
+      borderRadius: '5%'
     }
   });
   

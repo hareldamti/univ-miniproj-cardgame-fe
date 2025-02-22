@@ -3,24 +3,27 @@ import { StyleSheet, View, Text, Button } from 'react-native';
 import * as ScreenOrientation from 'expo-screen-orientation';
 import { Row, Column, Frame } from '../Utils/CompUtils'
 
-import { GameContextProvider, useGameContext } from '../State/GameState';
+import { GameActionTypes, GameContextProvider, useGameContext, validateActions } from '../State/GameState';
 import { initializeGame } from '../package/Logic/Initialization';
 
 import Board from "./Components/Board";
 import ScoringTable from './Components/ScoringTable';
-import Sidebar from './Components/Structures';
+import Structures from './Components/Structures';
+import Resources from './Components/Resources';
+import Trade from './Components/Trade';
+
 import React from 'react';
 import { useAppContext } from '../State/AppState';
 import { io, Socket } from 'socket.io-client';
 import { SOCKET_TAG_INIT, SOCKET_TAG_UPDATE, SOCKET_URL } from '../Utils/EnvConstsUtils';
-import { availableRoads } from '../package/Logic/BoardUtils';
+import { availableRoads } from '../package/Logic/BoardLogic';
+
+
 
 export default function Match() {
   useEffect(() => {
     ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.LANDSCAPE);
-    // fetch -> initial gameState
   },[]);
-  
   return (
     <GameContextProvider initialState={initializeGame(['a'])}>
     <ServerLogic/>
@@ -29,11 +32,11 @@ export default function Match() {
         <ScoringTable/>
       </Row>
       <Row span={10}>
+        <Column span={1}>
+          <Structures/>  
+        </Column>
         <Column span={5}>
           <Board/>
-        </Column>
-        <Column span={1}>
-          <Sidebar/>  
         </Column>
       </Row>
       <Row span={1.5}>
@@ -41,13 +44,13 @@ export default function Match() {
           <Menu/>
         </Column>
         <Column span={5}>
-          <Resources data={1}/>
+          <Resources/>
         </Column>
         <Column span={1}>
           <DevelopmentCard/>
         </Column>
         <Column span={1}>
-          <Trade/>
+          <TradeButton/>
         </Column>
         <Column span={1}>
           <FinishStep/>
@@ -62,18 +65,18 @@ export default function Match() {
 const ServerLogic = () => {
   const {gameState, dispatch} = useGameContext();
   const appState = useAppContext();
-  // useEffect(() => {
-  //   appState.socketHandler = {
-  //     socket: io(SOCKET_URL, {
-  //     })
-  //   };
-  //   appState.socketHandler.socket.on(SOCKET_TAG_UPDATE, updateAction => dispatch(updateAction));
-  //   appState.socketHandler.socket.on(SOCKET_TAG_INIT, initAction => {
-  //     dispatch(initAction);
-  //     gameState.user.playerIdx = gameState.players.findIndex(player => player.username == appState.username);
-  //   });
-  // }
-  // , []);
+  false && useEffect(() => {
+    ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.LANDSCAPE);
+    appState.socketHandler = {
+      socket: io(SOCKET_URL, {
+      })
+    };
+    appState.socketHandler.socket.on(SOCKET_TAG_UPDATE, updateActions => validateActions(updateActions) && dispatch(updateActions));
+    appState.socketHandler.socket.on(SOCKET_TAG_INIT, initActions => {
+      validateActions(initActions) && dispatch(initActions);
+      gameState.user.playerIdx = gameState.players.findIndex(player => player.username == appState.username);
+    });
+  });
   return <></>
 }
 
@@ -84,12 +87,11 @@ const ActionButton = ({title, onPress}) => {
   />
 }
 
-const Menu = () => <Frame/>
-
-interface ResourcesProps { data: number };
-const Resources = (props: ResourcesProps) => {
-  const {gameState, dispatch} = useGameContext();
-  return <Frame><Text>show {gameState.user.availableVisible}</Text></Frame>
+const Menu = () => {
+  return <ActionButton
+    title={"Menu"}
+    onPress={()=>console.log("menu")}
+  />
 }
 
 const DevelopmentCard = () => {
@@ -99,7 +101,7 @@ const DevelopmentCard = () => {
   />
 }
 
-const Trade = () => {
+const TradeButton = () => {
   return <ActionButton
     title={"Trade"}
     onPress={()=>console.log("trade")}

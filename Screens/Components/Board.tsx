@@ -7,14 +7,15 @@ import { City, Road, Settlement } from './Structures';
 import { availableStuctureColor, colorByPlayer } from '../../Utils/DesignUtils';
 import { useAppContext } from '../../State/AppState';
 import { useMemo, useState } from 'react';
-import { availableRoads, availableStructures } from '../../package/Logic/BoardUtils';
+import { availableRoads, availableStructures } from '../../package/Logic/BoardLogic';
+import { createEdge, createNode, isEdgeLegal } from '../../package/Logic/BoardUtils';
 
 export default () => {
     const {gameState, dispatch} = useGameContext();
     const appState = useAppContext();
     const available = {
         Structures: useMemo(() => {return availableStructures(gameState.players[gameState.user.playerIdx], gameState)}, [gameState.players, gameState.user.availableVisible]),
-        Roads: useMemo(() => {console.log(availableRoads(gameState.players[gameState.user.playerIdx], gameState));return availableRoads(gameState.players[gameState.user.playerIdx], gameState)}, [gameState.players, gameState.user.availableVisible])
+        Roads: useMemo(() => {return availableRoads(gameState.players[gameState.user.playerIdx], gameState)}, [gameState.players, gameState.user.availableVisible])
     }
 
     // for debugging:
@@ -38,7 +39,10 @@ export default () => {
                                     onPress={ () =>
                                         setHex(hex => {
                                             let updated = [...hex, {row: rowIdx, col: colIdx}];
-                                            if (updated.length == 2) dispatch({type: GameActionTypes.AddRoad, payload: {playerId: gameState.user.playerIdx, location: {adjHex: updated.splice(0) as [Coords, Coords], owner: gameState.user.playerIdx}}})
+                                            if (updated.length == 2) {
+                                                let newEdge = createEdge(updated.splice(0) as [Coords, Coords], gameState.user.playerIdx);
+                                                if (isEdgeLegal(newEdge)) dispatch([{type: GameActionTypes.AddRoad, payload: {playerId: gameState.user.playerIdx, location: newEdge}}]);
+                                            }
                                             //if (updated.length == 3) dispatch({type: GameActionTypes.AddSettlement, payload: {playerId: gameState.user.playerIdx, location: {adjHex: updated.splice(0) as [Coords, Coords, Coords], owner: gameState.user.playerIdx}}})
                                             //if (updated.length == 3) dispatch({type: GameActionTypes.AddCity, payload: {playerId: gameState.user.playerIdx, location: {adjHex: updated.splice(0) as [Coords, Coords, Coords], owner: gameState.user.playerIdx}}})
                                             return updated;})
@@ -50,41 +54,43 @@ export default () => {
         }
         
         {   // Existing
-            gameState.Table.Cities.map(city => {
-                let [x, y] = NodeCoords(city);
-                return <City key={genIntKey()} color={colorByPlayer(city.owner)} x={x} y={y}/>
-            })
-        }
-        {
-            gameState.Table.Settlements.map(settlement => {
-                let [x, y] = NodeCoords(settlement);
-                return <Settlement key={genIntKey()} color={colorByPlayer(settlement.owner)} x={x} y={y}/>
-            })
-        }
-        {   
             gameState.Table.Roads.map(road => {
                 let [x, y, theta] = EdgeCoords(road);
                 return <Road key={genIntKey()} color={colorByPlayer(road.owner)} x={x} y={y} theta={theta}/>
             })
+            
+        }
+        {
+            gameState.Table.Settlements.map(settlement => {
+                let [x, y] = NodeCoords(settlement);
+                return <Settlement key={genIntKey()} color={colorByPlayer(settlement.owner)} x={x} y={y} scale={0.5}/>
+            })
+        }
+        {   
+            gameState.Table.Cities.map(city => {
+                let [x, y] = NodeCoords(city);
+                return <City key={genIntKey()} color={colorByPlayer(city.owner)} x={x} y={y} scale={0.5}/>
+            })
         }
 
         {   // Available
+            gameState.user.availableVisible === 'Roads' && 
+            available.Roads.map(road => {
+                let [x, y, theta] = EdgeCoords(road);
+                return <Road key={genIntKey()} color={availableStuctureColor} x={x} y={y} theta={theta}/>
+            })
+        }
+        {   
             gameState.user.availableVisible === 'Cities' && 
             available.Structures.map(city => {
                 let [x, y] = NodeCoords(city);
-                return <City key={genIntKey()} color={availableStuctureColor} x={x} y={y}/>
+                return <City key={genIntKey()} color={availableStuctureColor} x={x} y={y} scale={0.5}/>
             })
         }
         {   gameState.user.availableVisible === 'Settlements' && 
             available.Structures.map(settlement => {
                 let [x, y] = NodeCoords(settlement);
-                return <Settlement key={genIntKey()} color={availableStuctureColor} x={x} y={y}/>
-            })
-        }
-        {   gameState.user.availableVisible === 'Roads' && 
-            available.Roads.map(road => {
-                let [x, y, theta] = EdgeCoords(road);
-                return <Road key={genIntKey()} color={availableStuctureColor} x={x} y={y} theta={theta}/>
+                return <Settlement key={genIntKey()} color={availableStuctureColor} x={x} y={y} scale={0.5}/>
             })
         }
     </Svg>

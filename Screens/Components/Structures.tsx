@@ -12,7 +12,7 @@ export default () => {
             <Svg
                 style={{ width: '100%', height: '100%' }}
                 viewBox="-50 -50 100 100"
-                onPress={ () => dispatch({type: GameActionTypes.SetVisibleAvailableStructures, payload: {choice: gameState.user.availableVisible == 'Settlements' ? null : 'Settlements'}}) }>
+                onPress={ () => dispatch([{type: GameActionTypes.SetVisibleAvailableStructures, payload: {choice: gameState.user.availableVisible == 'Settlements' ? null : 'Settlements'}}]) }>
                 <Settlement/>
             </Svg>
     </Row>
@@ -20,7 +20,7 @@ export default () => {
             <Svg
                 style={{ width: '100%', height: '100%' }}
                 viewBox="-50 -50 100 100"
-                onPress={ () => dispatch({type: GameActionTypes.SetVisibleAvailableStructures, payload: {choice: gameState.user.availableVisible == 'Cities' ? null : 'Cities'}}) }>
+                onPress={ () => dispatch([{type: GameActionTypes.SetVisibleAvailableStructures, payload: {choice: gameState.user.availableVisible == 'Cities' ? null : 'Cities'}}]) }>
                 <City/>
             </Svg>
     </Row>
@@ -28,7 +28,7 @@ export default () => {
             <Svg
                 style={{ width: '100%', height: '100%' }}
                 viewBox="-50 -50 100 100"
-                onPress={ () =>dispatch({type: GameActionTypes.SetVisibleAvailableStructures, payload: {choice: gameState.user.availableVisible == 'Roads' ? null : 'Roads'}}) }>
+                onPress={ () =>dispatch([{type: GameActionTypes.SetVisibleAvailableStructures, payload: {choice: gameState.user.availableVisible == 'Roads' ? null : 'Roads'}}]) }>
                 <Road/>
             </Svg>
     </Row>

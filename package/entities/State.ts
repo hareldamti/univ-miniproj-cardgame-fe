@@ -18,7 +18,7 @@ export type UserState = {
 }
 
 export type PlayerState = {
-    id: number,
+    id: number, // index in players array
     username: string,
     Settlements: NodeLocation[], // IDs of placed settlements
     Cities: NodeLocation[], // IDs of placed cities
@@ -45,7 +45,7 @@ export enum PlayerActionType {
     FinishStep
 }
 
-export type PlayerActionState =
+export type PlayerAction =
     | { type: PlayerActionType.BuildSettlement, NodeLocation: NodeLocation }
     | { type: PlayerActionType.BuildCity, city: NodeLocation }
     | { type: PlayerActionType.BuildRoad, EdgeLocation: EdgeLocation }
@@ -54,7 +54,7 @@ export type PlayerActionState =
     | { type: PlayerActionType.Trade, resources: Resources }
     | { type: PlayerActionType.FinishStep };
 
-export function handlePlayerAction(action: PlayerActionState, gameState: GameState, playerState: PlayerState): GameState {
+export function handlePlayerAction(action: PlayerAction, gameState: GameState, playerState: PlayerState): GameState {
     switch (action.type) {
         case PlayerActionType.BuildSettlement:
             buildSettlement(playerState, gameState, action.NodeLocation);

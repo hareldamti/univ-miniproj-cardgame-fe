@@ -7,15 +7,8 @@ import { colorByPlayer } from '../../Utils/DesignUtils';
 
 export default () => {
     const {gameState, dispatch} = useGameContext();
-    return <>
-        {gameState.players.map(player => 
-            <Column span={1} key={genIntKey()}> 
-                <Frame>
-                    <Text style={{...styles.textHeader, margin: 'auto', color: colorByPlayer(player.id)}}>
-                        {player.username}: {player.score}
-                    </Text>
-                </Frame>
-            </Column>
-        )}
-    </>
+    return <View style={styles.floatingWindow}>
+        hello
+    </View>
+
 }

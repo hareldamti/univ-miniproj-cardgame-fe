@@ -1,7 +1,7 @@
 import { createContext, PropsWithChildren, Dispatch, useReducer, ReactNode, useContext } from 'react';
 import { GameState, UserState } from '../package/entities/State';
 import { EdgeLocation, NodeLocation } from '../package/entities/Models';
-import { getTableState } from '../package/Logic/BoardUtils';
+import { getTableState } from '../package/Logic/BoardLogic';
 
 export enum GameActionTypes {
     AddSettlement,
@@ -21,7 +21,7 @@ type GameAction =
 
 type GameContext = {
     gameState: GameState,
-    dispatch: Dispatch<GameAction>;
+    dispatch: Dispatch<GameAction[]>;
 }
 
 type GameStateProviderProps = {
@@ -29,26 +29,38 @@ type GameStateProviderProps = {
     children: ReactNode
 }
 
+export const validateActions = (actions: any): actions is GameAction[] => {
+    return Array.isArray(actions) && actions.every(action => Object.values(GameActionTypes).includes(action.type));
+}
+
 const GameStateContext = createContext<GameContext | null>(null);
 
-function gameReducer(state: GameState, action: GameAction): GameState {
-    switch (action.type) {
-        case GameActionTypes.AddSettlement: {
-            let updatedState = {...state, players: state.players.map(player => player.id == action.payload.playerId ? {...player, Settlements: [...player.Settlements, {...action.payload.location, owner: player.id}]} : player)}
-            return {...updatedState, Table: getTableState(updatedState)};
-        } 
-        case GameActionTypes.AddCity: {
-            let updatedState = {...state, players: state.players.map(player => player.id == action.payload.playerId ? {...player, Cities: [...player.Cities, {...action.payload.location, owner: player.id}]} : player)}
-            return {...updatedState, Table: getTableState(updatedState)};
+function gameReducer(state: GameState, actions: GameAction[]): GameState {
+    let updatedState: GameState = state;
+    actions.forEach(action => {
+        switch (action.type) {
+            case GameActionTypes.AddSettlement: {
+                let update = {...updatedState, players: updatedState.players.map(player => player.id == action.payload.playerId ? {...player, Settlements: [...player.Settlements, {...action.payload.location, owner: player.id}]} : player)}
+                updatedState = {...update, Table: getTableState(update)};
+                break;
+            } 
+            case GameActionTypes.AddCity: {
+                let update = {...updatedState, players: updatedState.players.map(player => player.id == action.payload.playerId ? {...player, Cities: [...player.Cities, {...action.payload.location, owner: player.id}]} : player)}
+                updatedState = {...update, Table: getTableState(update)};
+                break;
+            }
+            case GameActionTypes.AddRoad: {
+                let update = {...updatedState, players: updatedState.players.map(player => player.id == action.payload.playerId ? {...player, Roads: [...player.Roads, {...action.payload.location, owner: player.id}]} : player)}
+                updatedState = {...update, Table: getTableState(update)};
+                break;
+            }
+            case GameActionTypes.SetVisibleAvailableStructures: {     
+                updatedState = {...updatedState, user: {...updatedState.user, availableVisible: action.payload.choice}};
+                break;
+            }
         }
-        case GameActionTypes.AddRoad: {
-            let updatedState = {...state, players: state.players.map(player => player.id == action.payload.playerId ? {...player, Roads: [...player.Roads, {...action.payload.location, owner: player.id}]} : player)}
-            return {...updatedState, Table: getTableState(updatedState)};
-        }
-        case GameActionTypes.SetVisibleAvailableStructures: {     
-            return {...state, user: {...state.user, availableVisible: action.payload.choice}};
-        }
-    }
+    });
+    return updatedState;
 }
 
 export const GameContextProvider: React.FC<GameStateProviderProps> = ({initialState, children}) => {
