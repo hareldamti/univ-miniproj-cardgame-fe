@@ -15,8 +15,8 @@ export default () => {
     const {gameState, dispatch} = useGameContext();
     const appState = useAppContext();
     const available = {
-        Structures: useMemo(() => {return availableStructures(gameState.players[gameState.user.playerIdx], gameState)}, [gameState.players, gameState.user.availableVisible]),
-        Roads: useMemo(() => {return availableRoads(gameState.players[gameState.user.playerIdx], gameState)}, [gameState.players, gameState.user.availableVisible])
+        Structures: useMemo(() => {return availableStructures(gameState.user.playerIdx, gameState)}, [gameState, gameState.user.availableVisible]),
+        Roads: useMemo(() => {return availableRoads(gameState.user.playerIdx, gameState)}, [gameState, gameState.user.availableVisible])
     }
 
     // for debugging:

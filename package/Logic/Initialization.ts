@@ -6,7 +6,7 @@ import { shuffle } from "./BoardLogic"
 
 export function initializeUser(): UserState {
     return {
-        playerIdx: 0, // TODO: Change to -1
+        playerIdx: -1,
         availableVisible: null
     }
 }

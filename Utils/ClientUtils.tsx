@@ -1,4 +1,5 @@
 
+import { SocketTags } from "../package/Consts";
 import { PlayerAction } from "../package/Entities/PlayerActions";
 import { AppState } from "../State/AppState";
 

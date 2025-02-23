@@ -21,11 +21,15 @@ export function getTableState(gameState: GameState) {
 }
 
 // Example usage in availableStructures function
-export function availableStructures(playerState: PlayerState, gameState: GameState): NodeLocation[] {
+export function availableStructures(playerIdx: number, gameState: GameState): NodeLocation[] {
+    if (playerIdx == -1) return [];
+    const playerState = gameState.players[playerIdx];
     return diffNodes(playerState.Roads.map(getRoadNodes).flat(1), [...gameState.Table.Settlements, ...gameState.Table.Cities]);
 }
 
 // Function to get available road locations for building for specific player
-export function availableRoads(playerState: PlayerState, gameState: GameState): EdgeLocation[] {
+export function availableRoads(playerIdx: number, gameState: GameState): EdgeLocation[] {
+    if (playerIdx == -1) return [];
+    const playerState = gameState.players[playerIdx];
     return diffEdges(playerState.Roads.map(getConnectedRoads).flat(1), gameState.Table.Roads);
 }

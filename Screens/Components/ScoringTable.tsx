@@ -8,6 +8,7 @@ import { colorByPlayer } from '../../Utils/DesignUtils';
 export default () => {
     const {gameState, dispatch} = useGameContext();
     return <>
+    
         {gameState.players.map(player => 
             <Column span={1} key={genIntKey()}> 
                 <Frame>

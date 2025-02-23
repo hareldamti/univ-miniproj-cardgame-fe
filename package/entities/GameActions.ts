@@ -6,6 +6,7 @@ export enum GameActionTypes {
     AddSettlement,
     AddCity,
     AddRoad,
+    InitializeGame,
     // User actions:
     SetVisibleAvailableStructures,
 }
@@ -19,11 +20,15 @@ export type GameAction =
     | { type: GameActionTypes.AddSettlement, payload: {playerId: number, location: NodeLocation} }
     | { type: GameActionTypes.AddRoad, payload: {playerId: number, location: EdgeLocation} }
     | { type: GameActionTypes.SetVisibleAvailableStructures, payload: {choice: 'Cities' | 'Settlements' | 'Roads' | null }}
+    | { type: GameActionTypes.InitializeGame, payload: {initialized: GameState}}
 
 export function gameReducer(state: GameState, actions: GameAction[]): GameState {
     let updatedState: GameState = state;
     actions.forEach(action => {
         switch (action.type) {
+            case GameActionTypes.InitializeGame: {
+                return action.payload.initialized;
+            }
             case GameActionTypes.AddSettlement: {
                 let update = {...updatedState, players: updatedState.players.map(player => player.id == action.payload.playerId ? {...player, Settlements: [...player.Settlements, {...action.payload.location, owner: player.id}]} : player)}
                 updatedState = {...update, Table: getTableState(update)};
@@ -39,6 +44,7 @@ export function gameReducer(state: GameState, actions: GameAction[]): GameState 
                 updatedState = {...update, Table: getTableState(update)};
                 break;
             }
+            
             case GameActionTypes.SetVisibleAvailableStructures: {     
                 updatedState = {...updatedState, user: {...updatedState.user, availableVisible: action.payload.choice}};
                 break;

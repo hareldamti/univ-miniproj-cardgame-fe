@@ -18,6 +18,7 @@ import { emitAction, SOCKET_URL } from '../Utils/ClientUtils';
 import { availableRoads } from '../package/Logic/BoardLogic';
 import { validateActions } from '../package/Entities/GameActions';
 import { PlayerActionType } from '../package/Entities/PlayerActions';
+import { SocketTags } from '../package/Consts';
 
 
 
@@ -26,7 +27,7 @@ export default function Match() {
     ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.LANDSCAPE);
   },[]);
   return (
-    <GameContextProvider initialState={initializeGame(['a'])}>
+    <GameContextProvider initialState={initializeGame([])}>
     <ServerLogic/>
     <View style={styles.container}>
       <Row span={1}>
@@ -58,7 +59,6 @@ export default function Match() {
         </Column>
       </Row>
     </View>
-
     </GameContextProvider>
   );
 }
@@ -67,19 +67,15 @@ const ServerLogic = () => {
   const {gameState, dispatch} = useGameContext();
   const appState = useAppContext();
   useEffect(() => {
-    ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.LANDSCAPE);
-    appState.socketHandler = {
-      socket: io(SOCKET_URL, {
-        reconnectionAttempts: 3,
-      })
-    };
-    //appState.socketHandler.socket.on('connect_error', () => {console.log("Failed to connect to server"); appState.socketHandler.socket.disconnect();})
-    appState.socketHandler.socket.on(SocketTags.UPDATE, updateActions => validateActions(updateActions) && dispatch(updateActions));
-    appState.socketHandler.socket.on(SocketTags.INIT, initActions => {
-      validateActions(initActions) && dispatch(initActions);
-      gameState.user.playerIdx = gameState.players.findIndex(player => player.username == appState.username);
+    appState.socketHandler?.socket.on(SocketTags.UPDATE, updateActions => validateActions(updateActions) && dispatch(updateActions));
+    appState.socketHandler?.socket.on(SocketTags.INIT, initAction => {
+      console.log("before", gameState, initAction);
+      validateActions([initAction]) && dispatch([initAction]);
+      console.log("after", gameState);
+      gameState.user.playerIdx = gameState.players.findIndex(player => player.username === appState.username);
     });
-  });
+    appState.socketHandler?.socket.emit(SocketTags.INIT);
+  }, []);
   return <></>
 }
 

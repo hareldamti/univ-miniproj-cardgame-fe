@@ -1,5 +1,7 @@
-enum SocketTags {
+export enum SocketTags {
     UPDATE = "SERVER_UPDATE",
-    INIT = "SERVER_INIT",
-    ACTION = "CLIENT_ACTION"
+    INIT = "INIT",
+    ACTION = "CLIENT_ACTION",
+    START = "START",
+    JOIN = "JOIN_ROOM",
 }
