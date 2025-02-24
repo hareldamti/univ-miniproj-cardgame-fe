@@ -1,19 +1,23 @@
-import { useContext } from 'react';
-import { StyleSheet, Text, View, Button } from 'react-native';
+import { useContext, useState } from 'react';
+import { StyleSheet, Text, View, Button, TextInput } from 'react-native';
 
 import { NavigatorParams } from '../Utils/Navigator';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useAppContext } from '../State/AppState';
+import { styles } from '../Utils/CompUtils';
 
 export const Login = ({ navigation }: NativeStackScreenProps<NavigatorParams, 'Login'>) => {
   const appState = useAppContext();
-
+  const [username, setUsername] = useState<string>("");
   return (
-    <View style={styles.container}>
-      <Text> Login </Text>
+    <View style={{...styles.container, borderRadius: '1rem', borderWidth: 1}}>
+      <TextInput
+      style={styles.input}
+      onChangeText={setUsername}
+      value={username}/>
       <Button
         title="Login"
-        onPress={() => { appState.username="12"; navigation.navigate('ChooseRoom');}}
+        onPress={ () => { appState.username=username; navigation.navigate('ChooseRoom'); } }
       />
     </View>
   );
@@ -21,11 +25,3 @@ export const Login = ({ navigation }: NativeStackScreenProps<NavigatorParams, 'L
 
 export default Login;
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});

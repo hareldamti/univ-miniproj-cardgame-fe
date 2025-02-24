@@ -14,9 +14,6 @@ export default function ChooseRoom({ navigation }: NativeStackScreenProps<Naviga
   const appState = useAppContext();
   const [msg, setMsg] = useState("");
   
-  /// TODO: DELETE
-  appState.username = "harel";
-
   useEffect(() => {
     appState.socketHandler = {
       socket: io(SOCKET_URL, {
@@ -28,8 +25,8 @@ export default function ChooseRoom({ navigation }: NativeStackScreenProps<Naviga
     };
     //appState.socketHandler.socket.on('connect_error', () => {console.log("Failed to connect to server"); appState.socketHandler.socket.disconnect();})
   
-    appState.socketHandler.socket.on(SocketTags.JOIN, (s) => console.log(s));
-    appState.socketHandler.socket.on(SocketTags.START, () => {console.log("START"); navigation.navigate('Match')});
+    appState.socketHandler.socket.on(SocketTags.JOIN, (s) => console.log("JOIN", s));
+    appState.socketHandler.socket.on(SocketTags.START, () => {navigation.navigate('Match')});
     }, []);
   
   return (

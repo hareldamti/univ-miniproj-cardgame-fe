@@ -1,5 +1,6 @@
 import { StyleSheet, View, Text, Button, GestureResponderEvent, PressableProps, } from 'react-native';
 import { PropsWithChildren } from 'react'
+import { HexType } from '../package/Entities/Models';
 
 interface Span {
   span: number,
@@ -12,7 +13,7 @@ export const Row = (props: PropsWithChildren<Span>): React.JSX.Element => <View 
 
 export const Column = (props: PropsWithChildren<Span>): React.JSX.Element => <View style={{...styles.col, ...{flex: props.span, borderColor: "black", borderWidth: 1}}} >{props.children}</View>;
 
-export const Frame = (props: PropsWithChildren): React.JSX.Element => <View style={styles.frame}>{props.children}</View>;
+export const Frame = (props: PropsWithChildren<{style?}>): React.JSX.Element => <View style={{...styles.frame, ...(props.style ?? {})}}>{props.children}</View>;
 
 export interface PressableSvg {
     onPress?: (event: GestureResponderEvent) => void
@@ -21,6 +22,7 @@ export interface PressableSvg {
     color?: string,
     theta?: number,
     scale?: number,
+    number?: number
 }
 
 export const styles = StyleSheet.create({
@@ -67,6 +69,49 @@ export const styles = StyleSheet.create({
       width: '80%',
       height: '80%',
       borderRadius: '5%'
+    },
+    input: {
+      height: 40,
+      margin: 12,
+      borderWidth: 1,
+      padding: 10,
     }
   });
   
+  export const colorByPlayer = (i: number) => {
+    switch(i) {
+        case 0:
+            return "#0048ff";
+        case 1:
+            return "#00d420";
+        case 2:
+            return "#c4321b";
+        case 3:
+            return "#0a0121";
+    }
+}
+
+export const hexagonalToColor = (h: HexType) => {
+  switch (h) {
+      case HexType.Desert:
+          return "#9c7f19";
+      case HexType.Forest:
+          return "#11b50e";
+      case HexType.Hill:
+          return "#a33103";
+      case HexType.Mountain:
+          return "#95a6c2";
+      case HexType.Field:
+          return "#fce19a";
+      case HexType.Sea:
+          return "#36aeff";
+      case HexType.Pasture:
+          return "#afe687";
+  }
+};
+
+export const availableStuctureColor = "#999999";
+
+export const currentUserBackgroundColor = "#a499ad";
+
+export const markedHexColor = "#dfb5ff"

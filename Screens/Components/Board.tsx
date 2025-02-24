@@ -1,22 +1,26 @@
 import { useGameContext } from '../../State/GameState';
-import { genIntKey, PressableSvg } from '../../Utils/CompUtils'
+import { availableStuctureColor, colorByPlayer, genIntKey, hexagonalToColor, markedHexColor, PressableSvg } from '../../Utils/CompUtils'
 import { Coords, EdgeLocation, Hexagonal, HexType, NodeLocation } from '../../package/Entities/Models'
-import { StyleSheet, View, Text, Button, } from 'react-native';
-import Svg, {Path} from 'react-native-svg';
-import { City, Road, Settlement } from './Structures';
-import { availableStuctureColor, colorByPlayer } from '../../Utils/DesignUtils';
+import { StyleSheet, View, Button, } from 'react-native';
+import Svg, {Path, G, Circle, Text} from 'react-native-svg';
+import { City, Dice, Road, Settlement } from './Structures';
 import { useAppContext } from '../../State/AppState';
 import { useMemo, useState } from 'react';
 import { availableRoads, availableStructures } from '../../package/Logic/BoardLogic';
 import { createEdge, createNode, isEdgeLegal } from '../../package/Logic/BoardUtils';
 import { GameActionTypes } from '../../package/Entities/GameActions';
+import { SocketTags } from '../../package/Consts';
+import { PlayerActionType } from '../../package/Entities/PlayerActions';
+import { getCurrentPlayer, getRound } from '../../package/Entities/State';
 
 export default () => {
     const {gameState, dispatch} = useGameContext();
     const appState = useAppContext();
     const available = {
-        Structures: useMemo(() => {return availableStructures(gameState.user.playerIdx, gameState)}, [gameState, gameState.user.availableVisible]),
-        Roads: useMemo(() => {return availableRoads(gameState.user.playerIdx, gameState)}, [gameState, gameState.user.availableVisible])
+        Structures: useMemo(() => {
+            return availableStructures(gameState.user.playerId, gameState)}, [gameState, gameState.user.availableVisible]),
+        Roads: useMemo(() => {
+            return availableRoads(gameState.user.playerId, gameState)}, [gameState, gameState.user.availableVisible])
     }
 
     // for debugging:
@@ -24,7 +28,6 @@ export default () => {
     //
 
     return <Svg style={{ width: '100%', height: '100%' }} viewBox="0 0 600 640">
-        
         {   // Hexagonals
             Array.from<[number, Hexagonal[]]>(gameState.Table.Board.entries()).map(row => { const [rowIdx, tableRow] = row;
                     return Array.from<[number, Hexagonal]>(tableRow.entries()).map(col => {
@@ -35,17 +38,17 @@ export default () => {
                                     hexagonal={tableHex}
                                     x={x}
                                     y={y}
-                                    
+                                    isMarked={gameState.lastDice && gameState.lastDice[0] + gameState.lastDice[1] == tableHex.nuOfPoints}
                                     // for debugging:
                                     onPress={ () =>
                                         setHex(hex => {
                                             let updated = [...hex, {row: rowIdx, col: colIdx}];
                                             if (updated.length == 2) {
-                                                let newEdge = createEdge(updated.splice(0) as [Coords, Coords], gameState.user.playerIdx);
-                                                if (isEdgeLegal(newEdge)) dispatch([{type: GameActionTypes.AddRoad, payload: {playerId: gameState.user.playerIdx, location: newEdge}}]);
+                                                let newEdge = createEdge(updated.splice(0) as [Coords, Coords], gameState.user.playerId);
+                                                if (isEdgeLegal(newEdge)) dispatch([{type: GameActionTypes.AddRoad, payload: {playerId: gameState.user.playerId, location: newEdge}}]);
                                             }
-                                            //if (updated.length == 3) dispatch({type: GameActionTypes.AddSettlement, payload: {playerId: gameState.user.playerIdx, location: {adjHex: updated.splice(0) as [Coords, Coords, Coords], owner: gameState.user.playerIdx}}})
-                                            //if (updated.length == 3) dispatch({type: GameActionTypes.AddCity, payload: {playerId: gameState.user.playerIdx, location: {adjHex: updated.splice(0) as [Coords, Coords, Coords], owner: gameState.user.playerIdx}}})
+                                            //if (updated.length == 3) dispatch({type: GameActionTypes.AddSettlement, payload: {playerId: gameState.user.playerId, location: {adjHex: updated.splice(0) as [Coords, Coords, Coords], owner: gameState.user.playerId}}})
+                                            //if (updated.length == 3) dispatch({type: GameActionTypes.AddCity, payload: {playerId: gameState.user.playerId, location: {adjHex: updated.splice(0) as [Coords, Coords, Coords], owner: gameState.user.playerId}}})
                                             return updated;})
                                     }
 
@@ -64,35 +67,48 @@ export default () => {
         {
             gameState.Table.Settlements.map(settlement => {
                 let [x, y] = NodeCoords(settlement);
-                return <Settlement key={genIntKey()} color={colorByPlayer(settlement.owner)} x={x} y={y} scale={0.5}/>
+                return <Settlement key={genIntKey()} color={colorByPlayer(settlement.owner)} x={x} y={y}/>
             })
         }
         {   
             gameState.Table.Cities.map(city => {
                 let [x, y] = NodeCoords(city);
-                return <City key={genIntKey()} color={colorByPlayer(city.owner)} x={x} y={y} scale={0.5}/>
+                return <City key={genIntKey()} color={colorByPlayer(city.owner)} x={x} y={y}/>
             })
         }
 
         {   // Available
-            gameState.user.availableVisible === 'Roads' && 
+            (gameState.user.availableVisible === 'Roads' || (getCurrentPlayer(gameState) == gameState.user.playerId && (getRound(gameState) == 0 || getRound(gameState) == 3))) && 
             available.Roads.map(road => {
                 let [x, y, theta] = EdgeCoords(road);
-                return <Road key={genIntKey()} color={availableStuctureColor} x={x} y={y} theta={theta}/>
+                return <Road key={genIntKey()} color={availableStuctureColor} x={x} y={y} theta={theta}
+                        onPress={() => appState.socketHandler?.socket.emit(SocketTags.ACTION,
+                            { type: PlayerActionType.BuildRoad, road })}/>
             })
         }
         {   
             gameState.user.availableVisible === 'Cities' && 
             available.Structures.map(city => {
                 let [x, y] = NodeCoords(city);
-                return <City key={genIntKey()} color={availableStuctureColor} x={x} y={y} scale={0.5}/>
+                return <City key={genIntKey()} color={availableStuctureColor} x={x} y={y}
+                onPress={() => appState.socketHandler?.socket.emit(SocketTags.ACTION,
+                    { type: PlayerActionType.BuildCity, city })}/>
             })
         }
-        {   gameState.user.availableVisible === 'Settlements' && 
+        {   (gameState.user.availableVisible === 'Settlements' || (getCurrentPlayer(gameState) == gameState.user.playerId && (getRound(gameState) == 1 || getRound(gameState) == 2))) && 
             available.Structures.map(settlement => {
                 let [x, y] = NodeCoords(settlement);
-                return <Settlement key={genIntKey()} color={availableStuctureColor} x={x} y={y} scale={0.5}/>
+                return <Settlement key={genIntKey()} color={availableStuctureColor} x={x} y={y}
+                onPress={() => appState.socketHandler?.socket.emit(SocketTags.ACTION,
+                    { type: PlayerActionType.BuildSettlement, settlement })}/>
             })
+        }
+        {
+            gameState.lastDice &&
+            <G>
+                <Dice x={600} y={500} theta={-10} number={gameState.lastDice[0]}/>
+                <Dice x={670} y={500} theta={20} number={gameState.lastDice[1]}/>
+            </G>
         }
     </Svg>
   }
@@ -117,33 +133,19 @@ const EdgeCoords = (n: EdgeLocation) => {
 
 interface HexagonalCompProps extends PressableSvg {
     hexagonal: Hexagonal,
+    isMarked: boolean
 }
 
 const HexagonalComp = (props: HexagonalCompProps) => {
-    return <Path onPress={props.onPress}
-            d="M-3.9485-52.214q3.9485-2.28 7.897 0l41.461 23.937q3.949 2.28 3.949 6.8395v47.875q0 4.5595-3.949 6.8395L3.9485 57.214q-3.9485 2.28-7.897 0l-41.461-23.937q-3.949-2.28-3.949-6.8395v-47.875q0-4.5595 3.949-6.8395Z"
-            fill={hexToColor(props.hexagonal.type)}
-            stroke="black"
-            strokeWidth="2"
-            transform={`translate(${props.x} ${props.y})`}
-        />
+    return <G onPress={props.onPress} transform={`translate(${props.x} ${props.y})`}>
+            <Path
+                d="M-3.9485-52.214q3.9485-2.28 7.897 0l41.461 23.937q3.949 2.28 3.949 6.8395v47.875q0 4.5595-3.949 6.8395L3.9485 57.214q-3.9485 2.28-7.897 0l-41.461-23.937q-3.949-2.28-3.949-6.8395v-47.875q0-4.5595 3.949-6.8395Z"
+                fill={hexagonalToColor(props.hexagonal.type)}
+                stroke="black"
+                strokeWidth="2"
+            />
+            {props.hexagonal.nuOfPoints && <><Circle cx={0} cy={0} r={20} fill={props.isMarked ? markedHexColor : "white"} stroke="black" strokeWidth="2"/>
+            <Text x={0} y={0} textAnchor="middle" alignmentBaseline="middle" pointerEvents="none" fontFamily='fantasy'>{props.hexagonal.nuOfPoints}</Text></>}
+        </G>
 }
 
-const hexToColor = (h: HexType) => {
-    switch (h) {
-        case HexType.Desert:
-            return "red";
-        case HexType.Forest:
-            return "green";
-        case HexType.Hill:
-            return "grey";
-        case HexType.Mountain:
-            return "blue";
-        case HexType.Field:
-            return "yellow";
-        case HexType.Sea:
-            return "cyan";
-        case HexType.Pasture:
-            return "purple";
-    }
-};

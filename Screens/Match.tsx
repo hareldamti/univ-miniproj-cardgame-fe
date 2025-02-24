@@ -16,7 +16,7 @@ import { useAppContext } from '../State/AppState';
 import { io, Socket } from 'socket.io-client';
 import { emitAction, SOCKET_URL } from '../Utils/ClientUtils';
 import { availableRoads } from '../package/Logic/BoardLogic';
-import { validateActions } from '../package/Entities/GameActions';
+import { GameActionTypes, validateActions } from '../package/Entities/GameActions';
 import { PlayerActionType } from '../package/Entities/PlayerActions';
 import { SocketTags } from '../package/Consts';
 
@@ -67,12 +67,12 @@ const ServerLogic = () => {
   const {gameState, dispatch} = useGameContext();
   const appState = useAppContext();
   useEffect(() => {
-    appState.socketHandler?.socket.on(SocketTags.UPDATE, updateActions => validateActions(updateActions) && dispatch(updateActions));
-    appState.socketHandler?.socket.on(SocketTags.INIT, initAction => {
-      console.log("before", gameState, initAction);
+    appState.socketHandler?.socket.on(SocketTags.UPDATE, updateActions => {
+      validateActions(updateActions) && dispatch(updateActions);
+      console.log("UPDATE", updateActions)
+    });
+    appState.socketHandler?.socket.on(SocketTags.INIT, initAction => {  
       validateActions([initAction]) && dispatch([initAction]);
-      console.log("after", gameState);
-      gameState.user.playerIdx = gameState.players.findIndex(player => player.username === appState.username);
     });
     appState.socketHandler?.socket.emit(SocketTags.INIT);
   }, []);
@@ -109,20 +109,11 @@ const TradeButton = () => {
 
 const FinishStep = () => {
   const appState = useAppContext();
-  // TODO: Delete
-  // const {gameState, dispatch} = useGameContext();
-  // const appState = useAppContext();
-  // return <Button title="Add city" onPress={()=>{
-  //   dispatch({
-  //   type: GameActionTypes.AddRoad,
-  //   payload: {
-  //     playerId: 0,
-  //     location: {adjHex: ([...appState.utils.coords.splice(appState.utils.coords.length - 2)] as [Coords, Coords])}
-  //   }});
-  // }}/>
-  return <ActionButton
+    return <ActionButton
     title={"Finish Step"}
-    onPress={()=> emitAction(appState, {type: PlayerActionType.FinishStep})}
+    onPress={()=> {
+      emitAction(appState, {type: PlayerActionType.FinishStep});
+    }}
   />
 }
 

@@ -3,36 +3,36 @@ import { useGameContext } from '../../State/GameState';
 
 import { styles, Row, Column, Frame, genIntKey, PressableSvg } from '../../Utils/CompUtils'
 import { Hexagonal, HexType } from '../../package/Entities/Models'
-import { StyleSheet, View, Text, Button } from 'react-native';
-import Svg, {Path} from 'react-native-svg';
+import { StyleSheet, View, Text, Button, Pressable } from 'react-native';
+import Svg, {Circle, G, Path} from 'react-native-svg';
 import { GameActionTypes } from '../../package/Entities/GameActions';
 
 export default () => {
     const {gameState, dispatch} = useGameContext();
     return <>
     <Row span={1}>
-            <Svg
-                style={{ width: '100%', height: '100%' }}
-                viewBox="-50 -50 100 100"
-                onPress={ () => dispatch([{type: GameActionTypes.SetVisibleAvailableStructures, payload: {choice: gameState.user.availableVisible == 'Settlements' ? null : 'Settlements'}}]) }>
-                <Settlement/>
-            </Svg>
+        <Svg
+            style={{ width: '100%', height: '100%' }}
+            viewBox="-50 -50 100 100"
+            onPress={ () => dispatch([{type: GameActionTypes.SetVisibleAvailableStructures, payload: {choice: gameState.user.availableVisible == 'Settlements' ? null : 'Settlements'}}]) }>
+            <Settlement/>
+        </Svg>
     </Row>
     <Row span={1}>
-            <Svg
-                style={{ width: '100%', height: '100%' }}
-                viewBox="-50 -50 100 100"
-                onPress={ () => dispatch([{type: GameActionTypes.SetVisibleAvailableStructures, payload: {choice: gameState.user.availableVisible == 'Cities' ? null : 'Cities'}}]) }>
-                <City/>
-            </Svg>
+        <Svg
+            style={{ width: '100%', height: '100%' }}
+            viewBox="-50 -50 100 100"
+            onPress={ () => dispatch([{type: GameActionTypes.SetVisibleAvailableStructures, payload: {choice: gameState.user.availableVisible == 'Cities' ? null : 'Cities'}}]) }>
+            <City/>
+        </Svg>
     </Row>
     <Row span={1}>
-            <Svg
-                style={{ width: '100%', height: '100%' }}
-                viewBox="-50 -50 100 100"
-                onPress={ () =>dispatch([{type: GameActionTypes.SetVisibleAvailableStructures, payload: {choice: gameState.user.availableVisible == 'Roads' ? null : 'Roads'}}]) }>
-                <Road/>
-            </Svg>
+        <Svg
+            style={{ width: '100%', height: '100%' }}
+            viewBox="-50 -50 100 100"
+            onPress={ () =>dispatch([{type: GameActionTypes.SetVisibleAvailableStructures, payload: {choice: gameState.user.availableVisible == 'Roads' ? null : 'Roads'}}]) }>
+            <Road/>
+        </Svg>
     </Row>
 
     </>
@@ -44,7 +44,7 @@ export const Settlement = (props: PressableSvg) =>
         fill={props.color}
         strokeWidth={5}
         stroke={"black"}
-        transform={`translate(${props.x ?? 0} ${props.y ?? 0}) rotate(${props.theta ?? 0}) scale(${(props.scale ?? 1)})`}
+        transform={`translate(${props.x ?? 0} ${props.y ?? 0}) rotate(${props.theta ?? 0}) scale(${(props.scale ?? 1 / 2)})`}
     />
 
 export const City = (props: PressableSvg) => 
@@ -53,7 +53,7 @@ export const City = (props: PressableSvg) =>
         fill={props.color}
         strokeWidth={2}
         stroke={"black"}
-        transform={`translate(${props.x ?? 0} ${props.y ?? 0}) rotate(${props.theta ?? 0}) scale(${(props.scale ?? 1) })`}
+        transform={`translate(${props.x ?? 0} ${props.y ?? 0}) rotate(${props.theta ?? 0}) scale(${(props.scale ?? 1 / 2) })`}
     />
 
 export const Road = (props: PressableSvg) => 
@@ -64,3 +64,34 @@ export const Road = (props: PressableSvg) =>
         stroke={"black"}
         transform={`translate(${props.x ?? 0} ${props.y ?? 0}) rotate(${props.theta ?? 0}) scale(${(props.scale ?? 1) / 2})`}
     />
+
+export const Dice = (props: PressableSvg) =>
+{
+    let rows = Math.floor(props.number / 2);
+    return <G transform={`translate(${props.x ?? 0} ${props.y ?? 0}) rotate(${props.theta ?? 0}) scale(${(props.scale ?? 1)})`}>
+        <Path
+            d="M13-10 13 10Q13 13 10 13L-10 13Q-13 13-13 10L-13-10Q-13-13-10-13L10-13Q13-13 13-10"
+            fill={'white'}
+            stroke="black"
+            strokeWidth="2"
+            transform={"scale(2)"}
+        />
+        { 
+            props.number % 2 == 1 && 
+            <Circle cx={0}
+                    cy={0}
+                    r={5} strokeWidth={2}/>
+        }
+        {    [...Array(rows).keys()].map(n =>
+                <>
+                    <Circle cx={11}
+                        cy={rows == 1 ? 0 : (n / (rows - 1) - 0.5) * 22}
+                        r={5} strokeWidth={2}/>
+                    <Circle cx={-11}
+                        cy={rows == 1 ? 0 : (n / (rows - 1) - 0.5) * 22}
+                        r={5} strokeWidth={2}/>
+                </>
+            )
+        }
+    </G>
+}
