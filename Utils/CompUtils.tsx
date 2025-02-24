@@ -56,7 +56,8 @@ export const styles = StyleSheet.create({
       borderWidth: 1,
     },
     textHeader: {
-
+      color: 'white',
+      fontWeight: '200'
     },
     floatingWindow: {
       position: 'absolute',
@@ -114,4 +115,6 @@ export const availableStuctureColor = "#999999";
 
 export const currentUserBackgroundColor = "#a499ad";
 
-export const markedHexColor = "#dfb5ff"
+export const markedHexColor = "#dfb5ff";
+
+export const roomColor = "#4367de";
