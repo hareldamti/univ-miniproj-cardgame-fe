@@ -19,9 +19,9 @@ export default () => {
     const appState = useAppContext();
     const available = {
         Structures: useMemo(() => {
-            return availableStructures(gameState.user.playerId, gameState)}, [gameState, gameState.user.availableVisible]),
+            return availableStructures(gameState.user.playerId, gameState)}, [gameState.Table.Settlements, gameState.Table.Cities, gameState.user.availableVisible]),
         Roads: useMemo(() => {
-            return availableRoads(gameState.user.playerId, gameState)}, [gameState, gameState.user.availableVisible]),
+            return availableRoads(gameState.user.playerId, gameState)}, [gameState.Table.Roads, gameState.user.availableVisible]),
         canBuyCity: useMemo(() => {
             return canBuy(gameState, gameState.user.playerId, cityCost);
         }, [gameState.players]),
@@ -49,19 +49,6 @@ export default () => {
                                     x={x}
                                     y={y}
                                     isMarked={gameState.lastDice && gameState.lastDice[0] + gameState.lastDice[1] == tableHex.nuOfPoints}
-                                    // for debugging:
-                                    onPress={ () =>
-                                        setHex(hex => {
-                                            let updated = [...hex, {row: rowIdx, col: colIdx}];
-                                            if (updated.length == 2) {
-                                                let newEdge = createEdge(updated.splice(0) as [Coords, Coords], gameState.user.playerId);
-                                                if (isEdgeLegal(newEdge)) dispatch([{type: GameActionTypes.AddRoad, payload: {playerId: gameState.user.playerId, location: newEdge}}]);
-                                            }
-                                            //if (updated.length == 3) dispatch({type: GameActionTypes.AddSettlement, payload: {playerId: gameState.user.playerId, location: {adjHex: updated.splice(0) as [Coords, Coords, Coords], owner: gameState.user.playerId}}})
-                                            //if (updated.length == 3) dispatch({type: GameActionTypes.AddCity, payload: {playerId: gameState.user.playerId, location: {adjHex: updated.splice(0) as [Coords, Coords, Coords], owner: gameState.user.playerId}}})
-                                            return updated;})
-                                    }
-
                                 /> } )
                 }
             ).flat(1)
