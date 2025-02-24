@@ -34,7 +34,7 @@ export function handlePlayerAction(action: PlayerAction, playerId: number, gameS
 }
 function buildSettlement(settlement: NodeLocation, playerId: number, gameState: GameState): GameAction[] {
     const isStarting = getRound(gameState) == 1 || getRound(gameState) == 2;
-    const canBuild = (isStarting || canBuy(gameState.players[playerId].Resources, settlementCost))
+    const canBuild = (isStarting || canBuy(gameState, playerId, settlementCost))
                       && hasNode(availableStructures(playerId, gameState), settlement);
     if (!canBuild) return [];
     const updates: GameAction[] = [{
@@ -50,7 +50,7 @@ function buildSettlement(settlement: NodeLocation, playerId: number, gameState: 
 }
 
 function buildCity(city: NodeLocation, playerId: number, gameState: GameState): GameAction[] {
-    const canBuild = canBuy(gameState.players[playerId].Resources, cityCost)
+    const canBuild = canBuy(gameState, playerId, cityCost)
                       && hasNode(availableStructures(playerId, gameState), city);
     if (!canBuild) return [];
     return [{
@@ -62,7 +62,7 @@ function buildCity(city: NodeLocation, playerId: number, gameState: GameState): 
 
 function buildRoad(road: EdgeLocation, playerId: number, gameState: GameState): GameAction[] {
     const isStarting = getRound(gameState) == 0 || getRound(gameState) == 3;
-    const canBuild = (isStarting || canBuy(gameState.players[playerId].Resources, roadCost))
+    const canBuild = (isStarting || canBuy(gameState, playerId, roadCost))
                       && hasEdge(availableRoads(playerId, gameState), road);
     if (!canBuild) return [];
     const updates: GameAction[] = [{

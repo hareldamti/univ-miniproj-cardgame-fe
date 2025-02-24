@@ -77,7 +77,10 @@ export const resourceAt = (type: HexType): Resources => ({
     wool: type == HexType.Pasture ? 1 : 0
 })
 
-export const canBuy = (playerResources: Resources, cost: Resources): boolean => legalPlayerResources(removeResources(playerResources, cost));
+export const canBuy = (gameState: GameState, playerId: number, cost: Resources): boolean => {
+    if (playerId == -1) return false;
+    return legalPlayerResources(removeResources(gameState.players[playerId].Resources, cost))
+};
 
 export const rollDice = (gameState: GameState) => getNextRound(gameState) < 4 ? null : [Math.floor(1 + Math.random() * 6), Math.floor(1 + Math.random() * 6)] as [number, number];
     

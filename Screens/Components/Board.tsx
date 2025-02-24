@@ -12,6 +12,7 @@ import { GameActionTypes } from '../../package/Entities/GameActions';
 import { SocketTags } from '../../package/Consts';
 import { PlayerActionType } from '../../package/Entities/PlayerActions';
 import { getCurrentPlayer, getRound } from '../../package/Entities/State';
+import { canBuy, cityCost, roadCost, settlementCost } from '../../package/Logic/GameUtils';
 
 export default () => {
     const {gameState, dispatch} = useGameContext();
@@ -20,7 +21,16 @@ export default () => {
         Structures: useMemo(() => {
             return availableStructures(gameState.user.playerId, gameState)}, [gameState, gameState.user.availableVisible]),
         Roads: useMemo(() => {
-            return availableRoads(gameState.user.playerId, gameState)}, [gameState, gameState.user.availableVisible])
+            return availableRoads(gameState.user.playerId, gameState)}, [gameState, gameState.user.availableVisible]),
+        canBuyCity: useMemo(() => {
+            return canBuy(gameState, gameState.user.playerId, cityCost);
+        }, [gameState.players]),
+        canBuySettlement: useMemo(() => {
+            return canBuy(gameState, gameState.user.playerId, settlementCost);
+        }, [gameState.players]),
+        canBuyRoad: useMemo(() => {
+            return canBuy(gameState, gameState.user.playerId, roadCost);
+        }, [gameState.players])
     }
 
     // for debugging:
@@ -78,7 +88,7 @@ export default () => {
         }
 
         {   // Available
-            (gameState.user.availableVisible === 'Roads' || (getCurrentPlayer(gameState) == gameState.user.playerId && (getRound(gameState) == 0 || getRound(gameState) == 3))) && 
+            ((available.canBuyRoad && gameState.user.availableVisible === 'Roads') || (getCurrentPlayer(gameState) == gameState.user.playerId && (getRound(gameState) == 0 || getRound(gameState) == 3))) && 
             available.Roads.map(road => {
                 let [x, y, theta] = EdgeCoords(road);
                 return <Road key={genIntKey()} color={availableStuctureColor} x={x} y={y} theta={theta}
@@ -87,7 +97,7 @@ export default () => {
             })
         }
         {   
-            gameState.user.availableVisible === 'Cities' && 
+            (available.canBuyCity && gameState.user.availableVisible === 'Cities') && 
             available.Structures.map(city => {
                 let [x, y] = NodeCoords(city);
                 return <City key={genIntKey()} color={availableStuctureColor} x={x} y={y}
@@ -95,7 +105,7 @@ export default () => {
                     { type: PlayerActionType.BuildCity, city })}/>
             })
         }
-        {   (gameState.user.availableVisible === 'Settlements' || (getCurrentPlayer(gameState) == gameState.user.playerId && (getRound(gameState) == 1 || getRound(gameState) == 2))) && 
+        {   ((available.canBuySettlement && gameState.user.availableVisible === 'Settlements') || (getCurrentPlayer(gameState) == gameState.user.playerId && (getRound(gameState) == 1 || getRound(gameState) == 2))) && 
             available.Structures.map(settlement => {
                 let [x, y] = NodeCoords(settlement);
                 return <Settlement key={genIntKey()} color={availableStuctureColor} x={x} y={y}
