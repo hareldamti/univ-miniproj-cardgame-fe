@@ -11,9 +11,9 @@ interface Span {
 let frameKey = 0;
 export const genIntKey = () => { frameKey+=1; return frameKey; }
 
-export const Row = (props: PropsWithChildren<Span>): React.JSX.Element => <View style={{...styles.row, flex: props.span, borderWidth: props.border, borderRadius: '0.5rem', backgroundColor: props.backgroundColor}} >{props.children}</View>;
+export const Row = (props: PropsWithChildren<Span>): React.JSX.Element => <View style={{...styles.row, flex: props.span, borderWidth: props.border, borderRadius: 10, backgroundColor: props.backgroundColor}} >{props.children}</View>;
 
-export const Column = (props: PropsWithChildren<Span>): React.JSX.Element => <View style={{...styles.col, flex: props.span, borderWidth: props.border, borderRadius: '0.5rem', backgroundColor: props.backgroundColor}} >{props.children}</View>;
+export const Column = (props: PropsWithChildren<Span>): React.JSX.Element => <View style={{...styles.col, flex: props.span, borderWidth: props.border, borderRadius: 10, backgroundColor: props.backgroundColor}} >{props.children}</View>;
 
 export const Frame = (props: PropsWithChildren<{style?}>): React.JSX.Element => <View style={{...styles.frame, ...(props.style ?? {})}}>{props.children}</View>;
 
@@ -69,19 +69,36 @@ export const styles = StyleSheet.create({
       transform: 'translate(-50%, -50%)',
       borderColor: 'black',
       borderWidth: 5,
-      backgroundColor: '#5c4235',
+      backgroundColor: '#a3887a',
       zIndex: 1,
       width: '60%',
       height: '80%',
-      borderRadius: '2rem',
+      borderRadius: 40,
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginHorizontal: "auto",
+    },
+    floatingAcceptTradeWindow: {
+      position: 'absolute',
+      top: '60%',
+      left: '50%',
+      transform: 'translate(-50%, -50%)',
+      borderColor: 'black',
+      borderWidth: 5,
+      backgroundColor: '#a3887a',
+      zIndex: 1,
+      width: '40%',
+      height: '45%',
+      borderRadius: 20,
       flex: 1,
       alignItems: 'center',
       justifyContent: 'center',
       marginHorizontal: "auto",
     },
     input: {
-      height: '1rem',
-      width: '5rem',
+      height: 20,
+      width: 100,
       margin: 12,
       borderWidth: 1,
       padding: 10,

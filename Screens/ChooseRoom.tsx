@@ -53,7 +53,6 @@ export default function ChooseRoom({
         onPress={() => {
           roomInput.length > 0 &&
             appState?.socketHandler?.socket.emit(SocketTags.JOIN, roomInput);
-          //appState.username="12"; navigation.navigate('Match');
         }}
       /></>}
       {Object.entries(roomStatus).map((entry) => {
@@ -67,7 +66,7 @@ export default function ChooseRoom({
             margin: '1rem',
             width: '10rem'
             }}>
-            <Text style={styles.textHeader}>Room: {room}</Text>
+            <Text style={styles.textHeader}>{room}</Text>
             {users.map((user) => (
               <Text style={styles.text} key={genIntKey()}>{user}</Text>
             ))}

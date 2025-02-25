@@ -29,7 +29,7 @@ export default function Match() {
     ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.LANDSCAPE);
   },[]);
   return (
-    <GameContextProvider initialState={initializeGame(["a","b","c"])}>
+    <GameContextProvider initialState={initializeGame([])}>
     <ServerLogic/>
     <View style={styles.container}>
       <Trade tradeOpen={tradeOpen} setTradeOpen={setTradeOpen}/>
@@ -77,7 +77,7 @@ const ServerLogic = () => {
     appState.socketHandler?.socket.on(SocketTags.INIT, initAction => {  
       validateActions([initAction]) && dispatch([initAction]);
     });
-    //appState.socketHandler?.socket.emit(SocketTags.INIT);
+    appState.socketHandler?.socket.emit(SocketTags.INIT);
   }, []);
   return <></>
 }

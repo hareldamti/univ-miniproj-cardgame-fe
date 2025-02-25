@@ -11,7 +11,7 @@ export default () => {
     
         {gameState.players.map(player => 
             <Column span={1} key={genIntKey()}> 
-                <Frame style={{backgroundColor: player.id == getCurrentPlayer(gameState) ? currentUserBackgroundColor : 'white' }}>
+                <Frame style={{backgroundColor: player.id == getCurrentPlayer(gameState) ? currentUserBackgroundColor : 'white', margin: 10}}>
                     <Text style={{...styles.textHeader, margin: 'auto', color: colorByPlayer(player.id)}}>
                         {player.username}: {player.score}
                     </Text>
