@@ -8,8 +8,8 @@ import { addResources, canBuy, cityCost, multiplyResources, negateResources, res
 
 export function handlePlayerAction(action: PlayerAction, playerId: number, gameState: GameState): GameAction[] {
     switch (action.type) {
-        case PlayerActionType.AcceptTrade:
-            return acceptTrade(action.trade, playerId, gameState)
+        case PlayerActionType.RespondToTrade:
+            return respondToTrade(action.accepted, playerId, gameState)
     }
     if (getCurrentPlayer(gameState) != playerId) {
         console.log(`Player ${playerId} tried to play ${PlayerActionType[action.type]} at player ${getCurrentPlayer(gameState)}'s turn`);
@@ -89,7 +89,7 @@ function offerTrade(trade: Trade, playerId: number, gameState: GameState): GameA
     throw new Error("Function not implemented.");
 }
 
-function acceptTrade(trade: Trade, playerId: number, gameState: GameState): GameAction[] {
+function respondToTrade(trade: boolean, playerId: number, gameState: GameState): GameAction[] {
     throw new Error("Function not implemented.");
 }
 

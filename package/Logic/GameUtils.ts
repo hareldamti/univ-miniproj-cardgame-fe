@@ -9,7 +9,7 @@ export const addResources = (a: Resources, b: Resources): Resources => ({
     wool: a.wool + b.wool
 });
 
-export const removeResources = (a: Resources, b: Resources): Resources => ({
+export const subtractResources = (a: Resources, b: Resources): Resources => ({
     lumber: a.lumber - b.lumber,
     brick: a.brick - b.brick,
     ore: a.ore - b.ore,
@@ -35,7 +35,7 @@ export const zeroCost: Resources = {
     wool: 0
 }
 
-export const negateResources = (a: Resources): Resources => removeResources(zeroCost, a);
+export const negateResources = (a: Resources): Resources => subtractResources(zeroCost, a);
 
 export const cityCost: Resources = {
     lumber: 0,
@@ -79,7 +79,7 @@ export const resourceAt = (type: HexType): Resources => ({
 
 export const canBuy = (gameState: GameState, playerId: number, cost: Resources): boolean => {
     if (playerId == -1) return false;
-    return legalPlayerResources(removeResources(gameState.players[playerId].Resources, cost))
+    return legalPlayerResources(subtractResources(gameState.players[playerId].Resources, cost))
 };
 
 export const rollDice = (gameState: GameState) => getNextRound(gameState) < 4 ? null : [Math.floor(1 + Math.random() * 6), Math.floor(1 + Math.random() * 6)] as [number, number];

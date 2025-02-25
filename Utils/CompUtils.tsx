@@ -4,14 +4,16 @@ import { HexType } from '../package/Entities/Models';
 
 interface Span {
   span: number,
+  backgroundColor?: string
+  border?: number
 }
 
 let frameKey = 0;
 export const genIntKey = () => { frameKey+=1; return frameKey; }
 
-export const Row = (props: PropsWithChildren<Span>): React.JSX.Element => <View style={{...styles.row, ...{flex: props.span}}} >{props.children}</View>;
+export const Row = (props: PropsWithChildren<Span>): React.JSX.Element => <View style={{...styles.row, flex: props.span, borderWidth: props.border, borderRadius: '0.5rem', backgroundColor: props.backgroundColor}} >{props.children}</View>;
 
-export const Column = (props: PropsWithChildren<Span>): React.JSX.Element => <View style={{...styles.col, ...{flex: props.span, borderColor: "black", borderWidth: 1}}} >{props.children}</View>;
+export const Column = (props: PropsWithChildren<Span>): React.JSX.Element => <View style={{...styles.col, flex: props.span, borderWidth: props.border, borderRadius: '0.5rem', backgroundColor: props.backgroundColor}} >{props.children}</View>;
 
 export const Frame = (props: PropsWithChildren<{style?}>): React.JSX.Element => <View style={{...styles.frame, ...(props.style ?? {})}}>{props.children}</View>;
 
@@ -35,44 +37,51 @@ export const styles = StyleSheet.create({
       width: '100%',
       height: '100%'
     },
-    row: {flexDirection: 'row', width:'100%', display: 'flex', paddingVertical: 1},
-    col: {display: 'flex', height:'100%', paddingHorizontal: 1},
-    circle: {
-      width: 100,
-      height: 100,
-      borderRadius: '50%',
-      backgroundColor: "red",
-    },
-    rectangle: {
-      width: 100 * 2,
-      height: 100,
-      backgroundColor: "red",
-    },
+    row: {flexDirection: 'row', alignItems: 'center',
+      justifyContent: 'center',width:'100%', display: 'flex', paddingVertical: 1},
+    col: {display: 'flex', alignItems: 'center',
+      justifyContent: 'center',height:'100%', paddingHorizontal: 1},
     frame: {
       display: 'flex',
-      borderColor: "black",
       width:'100%',
       height: '100%',
-      borderWidth: 1,
+    },
+    text: {
+      fontSize: 20,
+      fontWeight: '600',
     },
     textHeader: {
+      fontSize: 20,
       color: 'white',
-      fontWeight: '200'
+      fontWeight: '700',
+      textAlign: 'center',
+      textAlignVertical: 'center'
     },
-    floatingWindow: {
+    textBoldHeader: {
+      fontSize: 25,
+      color: 'white',
+      fontWeight: '800'
+    },
+    floatingTradeWindow: {
       position: 'absolute',
       top: '50%',
       left: '50%',
       transform: 'translate(-50%, -50%)',
-      borderColor: 'red',
+      borderColor: 'black',
       borderWidth: 5,
+      backgroundColor: '#5c4235',
       zIndex: 1,
-      width: '80%',
+      width: '60%',
       height: '80%',
-      borderRadius: '5%'
+      borderRadius: '2rem',
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginHorizontal: "auto",
     },
     input: {
-      height: 40,
+      height: '1rem',
+      width: '5rem',
       margin: 12,
       borderWidth: 1,
       padding: 10,

@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { StyleSheet, View, Text, Button } from 'react-native';
 import * as ScreenOrientation from 'expo-screen-orientation';
 import { Row, Column, Frame } from '../Utils/CompUtils'
@@ -7,7 +7,7 @@ import { initializeGame } from '../package/Logic/Initialization';
 
 import Board from "./Components/Board";
 import ScoringTable from './Components/ScoringTable';
-import Structures from './Components/Structures';
+import Structures, { Structure } from './Components/Structures';
 import Resources from './Components/Resources';
 import Trade from './Components/Trade';
 
@@ -23,25 +23,28 @@ import { SocketTags } from '../package/Consts';
 
 
 export default function Match() {
+  const [availableVisible, setAvailableVisible] = useState<Structure | null>();
+  const [tradeOpen, setTradeOpen] = useState<boolean>(false);
   useEffect(() => {
     ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.LANDSCAPE);
   },[]);
   return (
-    <GameContextProvider initialState={initializeGame([])}>
+    <GameContextProvider initialState={initializeGame(["a","b","c"])}>
     <ServerLogic/>
     <View style={styles.container}>
-      <Row span={1}>
+      <Trade tradeOpen={tradeOpen} setTradeOpen={setTradeOpen}/>
+      <Row span={1} border={2}>
         <ScoringTable/>
       </Row>
       <Row span={10}>
-        <Column span={1}>
-          <Structures/>  
+        <Column span={1} border={2}>
+          <Structures setAvailableVisible={setAvailableVisible}/>  
         </Column>
-        <Column span={5}>
-          <Board/>
+        <Column span={5} border={2}>
+          <Board availableVisible={availableVisible}/>
         </Column>
       </Row>
-      <Row span={1.5}>
+      <Row span={1.5} border={2}>
         <Column span={1}>
           <Menu/>
         </Column>
@@ -52,7 +55,7 @@ export default function Match() {
           <DevelopmentCard/>
         </Column>
         <Column span={1}>
-          <TradeButton/>
+          <TradeButton setTradeOpen={setTradeOpen}/>
         </Column>
         <Column span={1}>
           <FinishStep/>
@@ -74,7 +77,7 @@ const ServerLogic = () => {
     appState.socketHandler?.socket.on(SocketTags.INIT, initAction => {  
       validateActions([initAction]) && dispatch([initAction]);
     });
-    appState.socketHandler?.socket.emit(SocketTags.INIT);
+    //appState.socketHandler?.socket.emit(SocketTags.INIT);
   }, []);
   return <></>
 }
@@ -100,10 +103,10 @@ const DevelopmentCard = () => {
   />
 }
 
-const TradeButton = () => {
+const TradeButton = (props: {setTradeOpen: React.Dispatch<React.SetStateAction<boolean>>}) => {
   return <ActionButton
     title={"Trade"}
-    onPress={()=>console.log("trade")}
+    onPress={() => props.setTradeOpen(curr => !curr)}
   />
 }
 

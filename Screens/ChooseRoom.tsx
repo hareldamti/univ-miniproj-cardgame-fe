@@ -41,7 +41,7 @@ export default function ChooseRoom({
   return (
     <View style={styles.container}>
       
-      <Text> Hello {appState.username}</Text>
+      <Text style={styles.text}> Hello {appState.username}</Text>
       
       {Object.values(roomStatus).every(users => !users.includes(appState.username)) && <><TextInput
         style={styles.input}
@@ -69,7 +69,7 @@ export default function ChooseRoom({
             }}>
             <Text style={styles.textHeader}>Room: {room}</Text>
             {users.map((user) => (
-              <Text key={genIntKey()}>{user}</Text>
+              <Text style={styles.text} key={genIntKey()}>{user}</Text>
             ))}
             {users.includes(appState.username) && (
               <>
@@ -87,7 +87,7 @@ export default function ChooseRoom({
                 />
               </>
             )}
-            {!users.includes(appState.username) && (
+            {Object.values(roomStatus).every(users => !users.includes(appState.username)) && (
               <>
                 <Button
                   title="Join room"

@@ -7,14 +7,14 @@ import { StyleSheet, View, Text, Button, Pressable } from 'react-native';
 import Svg, {Circle, G, Path} from 'react-native-svg';
 import { GameActionTypes } from '../../package/Entities/GameActions';
 
-export default () => {
+export default (props: {setAvailableVisible: React.Dispatch<React.SetStateAction<Structure>>}) => {
     const {gameState, dispatch} = useGameContext();
     return <>
     <Row span={1}>
         <Svg
             style={{ width: '100%', height: '100%' }}
             viewBox="-50 -50 100 100"
-            onPress={ () => dispatch([{type: GameActionTypes.SetVisibleAvailableStructures, payload: {choice: gameState.user.availableVisible == 'Settlements' ? null : 'Settlements'}}]) }>
+            onPress={ () => props.setAvailableVisible(curr => curr == Structure.Settlement ? null : Structure.Settlement) }>
             <Settlement/>
         </Svg>
     </Row>
@@ -22,7 +22,7 @@ export default () => {
         <Svg
             style={{ width: '100%', height: '100%' }}
             viewBox="-50 -50 100 100"
-            onPress={ () => dispatch([{type: GameActionTypes.SetVisibleAvailableStructures, payload: {choice: gameState.user.availableVisible == 'Cities' ? null : 'Cities'}}]) }>
+            onPress={ () => props.setAvailableVisible(curr => curr == Structure.City ? null : Structure.City) }>
             <City/>
         </Svg>
     </Row>
@@ -30,12 +30,17 @@ export default () => {
         <Svg
             style={{ width: '100%', height: '100%' }}
             viewBox="-50 -50 100 100"
-            onPress={ () =>dispatch([{type: GameActionTypes.SetVisibleAvailableStructures, payload: {choice: gameState.user.availableVisible == 'Roads' ? null : 'Roads'}}]) }>
-            <Road/>
+            onPress={ () => props.setAvailableVisible(curr => curr == Structure.Road ? null : Structure.Road) }> <Road/>
         </Svg>
     </Row>
 
     </>
+}
+
+export enum Structure {
+    Settlement,
+    City,
+    Road
 }
 
 export const Settlement = (props: PressableSvg) => 

@@ -3,7 +3,7 @@ import { availableStuctureColor, colorByPlayer, genIntKey, hexagonalToColor, mar
 import { Coords, EdgeLocation, Hexagonal, HexType, NodeLocation } from '../../package/Entities/Models'
 import { StyleSheet, View, Button, } from 'react-native';
 import Svg, {Path, G, Circle, Text} from 'react-native-svg';
-import { City, Dice, Road, Settlement } from './Structures';
+import { City, Dice, Road, Settlement, Structure } from './Structures';
 import { useAppContext } from '../../State/AppState';
 import { useMemo, useState } from 'react';
 import { availableRoads, availableStructures } from '../../package/Logic/BoardLogic';
@@ -14,14 +14,14 @@ import { PlayerActionType } from '../../package/Entities/PlayerActions';
 import { getCurrentPlayer, getRound } from '../../package/Entities/State';
 import { canBuy, cityCost, roadCost, settlementCost } from '../../package/Logic/GameUtils';
 
-export default () => {
+export default (props: {availableVisible: Structure}) => {
     const {gameState, dispatch} = useGameContext();
     const appState = useAppContext();
     const available = {
         Structures: useMemo(() => {
-            return availableStructures(gameState.user.playerId, gameState)}, [gameState.Table.Settlements, gameState.Table.Cities, gameState.user.availableVisible]),
+            return availableStructures(gameState.user.playerId, gameState)}, [gameState.Table.Settlements, gameState.Table.Cities]),
         Roads: useMemo(() => {
-            return availableRoads(gameState.user.playerId, gameState)}, [gameState.Table.Roads, gameState.user.availableVisible]),
+            return availableRoads(gameState.user.playerId, gameState)}, [gameState.Table.Roads]),
         canBuyCity: useMemo(() => {
             return canBuy(gameState, gameState.user.playerId, cityCost);
         }, [gameState.players]),
@@ -75,7 +75,7 @@ export default () => {
         }
 
         {   // Available
-            ((available.canBuyRoad && gameState.user.availableVisible === 'Roads') || (getCurrentPlayer(gameState) == gameState.user.playerId && (getRound(gameState) == 0 || getRound(gameState) == 3))) && 
+            ((available.canBuyRoad && props.availableVisible == Structure.Road) || (getCurrentPlayer(gameState) == gameState.user.playerId && (getRound(gameState) == 0 || getRound(gameState) == 3))) && 
             available.Roads.map(road => {
                 let [x, y, theta] = EdgeCoords(road);
                 return <Road key={genIntKey()} color={availableStuctureColor} x={x} y={y} theta={theta}
@@ -84,7 +84,7 @@ export default () => {
             })
         }
         {   
-            (available.canBuyCity && gameState.user.availableVisible === 'Cities') && 
+            (available.canBuyCity && props.availableVisible == Structure.City) && 
             available.Structures.map(city => {
                 let [x, y] = NodeCoords(city);
                 return <City key={genIntKey()} color={availableStuctureColor} x={x} y={y}
@@ -92,7 +92,7 @@ export default () => {
                     { type: PlayerActionType.BuildCity, city })}/>
             })
         }
-        {   ((available.canBuySettlement && gameState.user.availableVisible === 'Settlements') || (getCurrentPlayer(gameState) == gameState.user.playerId && (getRound(gameState) == 1 || getRound(gameState) == 2))) && 
+        {   ((available.canBuySettlement && props.availableVisible == Structure.Settlement) || (getCurrentPlayer(gameState) == gameState.user.playerId && (getRound(gameState) == 1 || getRound(gameState) == 2))) && 
             available.Structures.map(settlement => {
                 let [x, y] = NodeCoords(settlement);
                 return <Settlement key={genIntKey()} color={availableStuctureColor} x={x} y={y}
