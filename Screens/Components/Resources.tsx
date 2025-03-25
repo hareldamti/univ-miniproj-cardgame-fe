@@ -6,7 +6,7 @@ import { StyleSheet, View, Text, Button, } from 'react-native';
 
 export default () => {
     const {gameState, dispatch} = useGameContext();
-    return <>
+    return <Row>
         {
             Object.entries(gameState.players[gameState.user.playerId]?.Resources ?? {}).map(entry => {
                 let [resource, amount] = entry;
@@ -17,5 +17,5 @@ export default () => {
                 </Column>
             })
         }
-    </>
+    </Row>
 }

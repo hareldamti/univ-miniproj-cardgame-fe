@@ -4,7 +4,7 @@ import { useAppContext } from "../State/AppState";
 
 import { NavigatorParams } from "../Utils/Navigator";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { genIntKey, roomColor, styles } from "../Utils/CompUtils";
+import { genIntKey, roomColor, Row, styles } from "../Utils/CompUtils";
 import { io } from "socket.io-client";
 import { useEffect, useState } from "react";
 import { SOCKET_URL } from "../Utils/ClientUtils";
@@ -40,22 +40,31 @@ export default function ChooseRoom({
 
   return (
     <View style={styles.container}>
-      
+      <Row></Row>
+      <Row>
+      <Text style={{...styles.textBoldHeader, color: 'black'}}>Lobby</Text>
+      </Row>
+      <Row>
       <Text style={styles.text}> Hello {appState.username}</Text>
+      </Row>
       
-      {Object.values(roomStatus).every(users => !users.includes(appState.username)) && <><TextInput
+      {Object.values(roomStatus).every(users => !users.includes(appState.username)) && <>
+      <Row>
+        <TextInput
         style={styles.input}
         onChangeText={setRoomInput}
         value={roomInput}
-      />
-      <Button
-        title="Join room"
-        onPress={() => {
-          roomInput.length > 0 &&
-            appState?.socketHandler?.socket.emit(SocketTags.JOIN, roomInput);
-        }}
-      /></>}
-      {Object.entries(roomStatus).map((entry) => {
+      /><Button
+      title="Create / join room"
+      onPress={() => {
+        roomInput.length > 0 &&
+          appState?.socketHandler?.socket.emit(SocketTags.JOIN, roomInput);
+      }}
+    /></Row>
+    
+      <Row><Text style={styles.text}> Active rooms: </Text></Row>
+      </>}
+      <Row span={3}>{Object.entries(roomStatus).map((entry) => {
         const [room, users] = entry;
         
         return (
@@ -98,7 +107,8 @@ export default function ChooseRoom({
             )}
           </View>
         );
-      })}
+      })}</Row>
+
     </View>
   );
 }

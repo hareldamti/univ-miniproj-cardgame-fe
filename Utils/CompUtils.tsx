@@ -11,11 +11,19 @@ interface Span {
 let frameKey = 0;
 export const genIntKey = () => { frameKey+=1; return frameKey; }
 
-export const Row = (props: PropsWithChildren<Span>): React.JSX.Element => <View style={{...styles.row, flex: props.span ?? 1, borderWidth: props.border, borderRadius: 10, backgroundColor: props.backgroundColor}} >{props.children}</View>;
+export const Row = (props: PropsWithChildren<Span>): React.JSX.Element => <View style={{...styles.row, flexWrap: 'wrap', flex: props.span ?? 1, borderWidth: props.border, borderRadius: 10, backgroundColor: props.backgroundColor}} >{props.children}</View>;
 
 export const Column = (props: PropsWithChildren<Span>): React.JSX.Element => <View style={{...styles.col, flex: props.span ?? 1, borderWidth: props.border, borderRadius: 10, backgroundColor: props.backgroundColor}} >{props.children}</View>;
 
 export const Frame = (props: PropsWithChildren<{style?}>): React.JSX.Element => <View style={{...styles.frame, ...(props.style ?? {})}}>{props.children}</View>;
+
+export const ActionButton = ({title, onPress, color=null}) => {
+  return <Button
+    color={color}
+    title={title}
+    onPress={onPress}
+  />
+}
 
 export interface PressableSvg {
     onPress?: (event: GestureResponderEvent) => void
