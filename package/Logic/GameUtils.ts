@@ -69,6 +69,46 @@ export const developmentCardCost: Resources = {
     wool: 1
 }
 
+export const Lumber: Resources = {
+    lumber: 1,
+    brick: 0,
+    ore: 0,
+    grain: 0,
+    wool: 0
+}
+
+export const Brick: Resources = {
+    lumber: 0,
+    brick: 1,
+    ore: 0,
+    grain: 0,
+    wool: 0
+}
+
+export const Ore: Resources = {
+    lumber: 0,
+    brick: 0,
+    ore: 1,
+    grain: 0,
+    wool: 0
+}
+
+export const Grain: Resources = {
+    lumber: 0,
+    brick: 0,
+    ore: 0,
+    grain: 1,
+    wool: 0
+}
+
+export const Wool: Resources = {
+    lumber: 0,
+    brick: 0,
+    ore: 0,
+    grain: 0,
+    wool: 1
+}
+
 export const resourceAt = (type: HexType): Resources => ({
     lumber: type == HexType.Forest ? 1 : 0,
     brick: type == HexType.Hill ? 1 : 0,

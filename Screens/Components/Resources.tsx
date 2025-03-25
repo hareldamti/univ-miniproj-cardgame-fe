@@ -8,16 +8,14 @@ export default () => {
     const {gameState, dispatch} = useGameContext();
     return <>
         {
-            <Row span={1} key={genIntKey()}>
-                {Object.entries(gameState.players[gameState.user.playerId]?.Resources ?? {}).map(entry => {
-                    let [resource, amount] = entry;
-                    return <Column span={1} key={genIntKey()}>
-                        <Text style={{...styles.textHeader, margin: 'auto', color: colorByPlayer(gameState.user.playerId)}}>
-                        {resource}: {amount}
-                    </Text>
-                    </Column>
-                })}
-            </Row>
+            Object.entries(gameState.players[gameState.user.playerId]?.Resources ?? {}).map(entry => {
+                let [resource, amount] = entry;
+                return <Column span={1} key={genIntKey()}>
+                    <Text style={{...styles.textHeader, margin: 'auto', color: colorByPlayer(gameState.user.playerId)}}>
+                    {resource}: {amount}
+                </Text>
+                </Column>
+            })
         }
     </>
 }

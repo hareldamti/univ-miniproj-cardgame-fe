@@ -10,29 +10,29 @@ import { GameActionTypes } from '../../package/Entities/GameActions';
 export default (props: {setAvailableVisible: React.Dispatch<React.SetStateAction<Structure>>}) => {
     const {gameState, dispatch} = useGameContext();
     return <>
-    <Row span={1}>
+    <Column span={1}>
         <Svg
             style={{ width: '100%', height: '100%' }}
             viewBox="-50 -50 100 100"
             onPress={ () => props.setAvailableVisible(curr => curr == Structure.Settlement ? null : Structure.Settlement) }>
             <Settlement/>
         </Svg>
-    </Row>
-    <Row span={1}>
+    </Column>
+    <Column span={1}>
         <Svg
             style={{ width: '100%', height: '100%' }}
             viewBox="-50 -50 100 100"
             onPress={ () => props.setAvailableVisible(curr => curr == Structure.City ? null : Structure.City) }>
             <City/>
         </Svg>
-    </Row>
-    <Row span={1}>
+    </Column>
+    <Column span={1}>
         <Svg
             style={{ width: '100%', height: '100%' }}
             viewBox="-50 -50 100 100"
             onPress={ () => props.setAvailableVisible(curr => curr == Structure.Road ? null : Structure.Road) }> <Road/>
         </Svg>
-    </Row>
+    </Column>
 
     </>
 }

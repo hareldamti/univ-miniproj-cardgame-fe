@@ -3,7 +3,7 @@ import { PropsWithChildren } from 'react'
 import { HexType } from '../package/Entities/Models';
 
 interface Span {
-  span: number,
+  span?: number,
   backgroundColor?: string
   border?: number
 }
@@ -11,9 +11,9 @@ interface Span {
 let frameKey = 0;
 export const genIntKey = () => { frameKey+=1; return frameKey; }
 
-export const Row = (props: PropsWithChildren<Span>): React.JSX.Element => <View style={{...styles.row, flex: props.span, borderWidth: props.border, borderRadius: 10, backgroundColor: props.backgroundColor}} >{props.children}</View>;
+export const Row = (props: PropsWithChildren<Span>): React.JSX.Element => <View style={{...styles.row, flex: props.span ?? 1, borderWidth: props.border, borderRadius: 10, backgroundColor: props.backgroundColor}} >{props.children}</View>;
 
-export const Column = (props: PropsWithChildren<Span>): React.JSX.Element => <View style={{...styles.col, flex: props.span, borderWidth: props.border, borderRadius: 10, backgroundColor: props.backgroundColor}} >{props.children}</View>;
+export const Column = (props: PropsWithChildren<Span>): React.JSX.Element => <View style={{...styles.col, flex: props.span ?? 1, borderWidth: props.border, borderRadius: 10, backgroundColor: props.backgroundColor}} >{props.children}</View>;
 
 export const Frame = (props: PropsWithChildren<{style?}>): React.JSX.Element => <View style={{...styles.frame, ...(props.style ?? {})}}>{props.children}</View>;
 
@@ -71,8 +71,8 @@ export const styles = StyleSheet.create({
       borderWidth: 5,
       backgroundColor: '#a3887a',
       zIndex: 1,
-      width: '60%',
-      height: '80%',
+      width: '90%',
+      height: '70%',
       borderRadius: 40,
       flex: 1,
       alignItems: 'center',

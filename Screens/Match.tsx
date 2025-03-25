@@ -26,7 +26,7 @@ export default function Match() {
   const [availableVisible, setAvailableVisible] = useState<Structure | null>();
   const [tradeOpen, setTradeOpen] = useState<boolean>(false);
   useEffect(() => {
-    ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.LANDSCAPE);
+    ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT);
   },[]);
   return (
     <GameContextProvider initialState={initializeGame([])}>
@@ -37,19 +37,22 @@ export default function Match() {
         <ScoringTable/>
       </Row>
       <Row span={10}>
-        <Column span={1} border={2}>
-          <Structures setAvailableVisible={setAvailableVisible}/>  
-        </Column>
-        <Column span={5} border={2}>
-          <Board availableVisible={availableVisible}/>
-        </Column>
+        <Board availableVisible={availableVisible}/>
       </Row>
       <Row span={1.5} border={2}>
-        <Column span={1}>
-          <Menu/>
-        </Column>
+          <Structures setAvailableVisible={setAvailableVisible}/>  
+      </Row>
+      <Row span={1.5} border={2}>
         <Column span={5}>
           <Resources/>
+        </Column>
+        </Row>
+      <Row span={1.5} border={2}>
+        <Column span={1}>
+          <Exit/>
+        </Column>
+        <Column span={1}>
+          <VoiceChat/>
         </Column>
         <Column span={1}>
           <DevelopmentCard/>
@@ -82,30 +85,40 @@ const ServerLogic = () => {
   return <></>
 }
 
-const ActionButton = ({title, onPress}) => {
+const ActionButton = ({title, onPress, color=null}) => {
   return <Button
+    color={color}
     title={title}
     onPress={onPress}
   />
 }
 
-const Menu = () => {
+const Exit = () => {
   return <ActionButton
-    title={"Menu"}
+    title={"Exit\nGame"}
     onPress={()=>console.log("menu")}
+    color="black"
+  />
+}
+
+const VoiceChat = () => {
+  return <ActionButton
+    title={"Voice\nChat"}
+    onPress={()=>console.log("menu")}
+    color="red"
   />
 }
 
 const DevelopmentCard = () => {
   return <ActionButton
-    title={"Development\nCard"}
+    title={"Dev\nCards"}
     onPress={()=>console.log("dev card")}
   />
 }
 
 const TradeButton = (props: {setTradeOpen: React.Dispatch<React.SetStateAction<boolean>>}) => {
   return <ActionButton
-    title={"Trade"}
+    title={"Open\nTrade"}
     onPress={() => props.setTradeOpen(curr => !curr)}
   />
 }
@@ -113,7 +126,7 @@ const TradeButton = (props: {setTradeOpen: React.Dispatch<React.SetStateAction<b
 const FinishStep = () => {
   const appState = useAppContext();
     return <ActionButton
-    title={"Finish Step"}
+    title={"Finish\nStep"}
     onPress={()=> {
       emitAction(appState, {type: PlayerActionType.FinishStep});
     }}
