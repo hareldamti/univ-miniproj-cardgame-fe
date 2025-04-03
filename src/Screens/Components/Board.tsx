@@ -1,8 +1,7 @@
 import { useGameContext } from '../../State/GameState';
-import { availableStuctureColor, colorByPlayer, genIntKey, hexagonalToColor, markedHexColor, PressableSvg } from '../../Utils/CompUtils'
+import { availableStuctureColor, colorByPlayer, genIntKey, hexagonalToColor, markedHexColor, PressableSvg, styles } from '../../Utils/CompUtils'
 import { Coords, EdgeLocation, Hexagonal, HexType, NodeLocation } from '../../package/Entities/Models'
-import { StyleSheet, View, Button, } from 'react-native';
-import Svg, {Path, G, Circle, Text} from 'react-native-svg';
+
 import { City, Dice, Road, Settlement, Structure } from './Structures';
 import { useAppContext } from '../../State/AppState';
 import { useMemo, useState } from 'react';
@@ -14,7 +13,7 @@ import { PlayerActionType } from '../../package/Entities/PlayerActions';
 import { getCurrentPlayer, getRound } from '../../package/Entities/State';
 import { canBuy, cityCost, roadCost, settlementCost } from '../../package/Logic/GameUtils';
 
-export default (props: {availableVisible: Structure}) => {
+export default (props: {availableVisible: Structure | null}) => {
     const {gameState, dispatch} = useGameContext();
     const appState = useAppContext();
     const available = {
@@ -37,7 +36,7 @@ export default (props: {availableVisible: Structure}) => {
     const [hex, setHex] = useState<Coords[]>([]);
     //
 
-    return <Svg style={{ width: '100%', height: '100%' }} viewBox="0 0 600 640">
+    return <svg style={styles.svg} viewBox="0 0 600 640">
         {   // Hexagonals
             Array.from<[number, Hexagonal[]]>(gameState.Table.Board.entries()).map(row => { const [rowIdx, tableRow] = row;
                     return Array.from<[number, Hexagonal]>(tableRow.entries()).map(col => {
@@ -102,12 +101,12 @@ export default (props: {availableVisible: Structure}) => {
         }
         {
             gameState.lastDice &&
-            <G>
-                <Dice x={600} y={500} theta={-10} number={gameState.lastDice[0]}/>
-                <Dice x={670} y={500} theta={20} number={gameState.lastDice[1]}/>
-            </G>
+            <g>
+                <Dice x={150} y={600} theta={-10} number={gameState.lastDice[0]}/>
+                <Dice x={210} y={600} theta={20} number={gameState.lastDice[1]}/>
+            </g>
         }
-    </Svg>
+    </svg>
   }
 
 // const playerIdToColor
@@ -130,19 +129,19 @@ const EdgeCoords = (n: EdgeLocation) => {
 
 interface HexagonalCompProps extends PressableSvg {
     hexagonal: Hexagonal,
-    isMarked: boolean
+    isMarked: boolean | null
 }
 
 const HexagonalComp = (props: HexagonalCompProps) => {
-    return <G onPress={props.onPress} transform={`translate(${props.x} ${props.y})`}>
-            <Path
+    return <g onClick={props.onPress} transform={`translate(${props.x} ${props.y})`}>
+            <path
                 d="M-3.9485-52.214q3.9485-2.28 7.897 0l41.461 23.937q3.949 2.28 3.949 6.8395v47.875q0 4.5595-3.949 6.8395L3.9485 57.214q-3.9485 2.28-7.897 0l-41.461-23.937q-3.949-2.28-3.949-6.8395v-47.875q0-4.5595 3.949-6.8395Z"
                 fill={hexagonalToColor(props.hexagonal.type)}
                 stroke="black"
                 strokeWidth="2"
             />
-            {props.hexagonal.nuOfPoints && <><Circle cx={0} cy={0} r={20} fill={props.isMarked ? markedHexColor : "white"} stroke="black" strokeWidth="2"/>
-            <Text x={0} y={0} textAnchor="middle" alignmentBaseline="middle" pointerEvents="none" fontFamily='fantasy'>{props.hexagonal.nuOfPoints}</Text></>}
-        </G>
+            {props.hexagonal.nuOfPoints && <><circle cx={0} cy={0} r={20} fill={props.isMarked ? markedHexColor : "white"} stroke="black" strokeWidth="2"/>
+            <text x={0} y={0} textAnchor="middle" alignmentBaseline="middle" pointerEvents="none" fontFamily='fantasy'>{props.hexagonal.nuOfPoints}</text></>}
+        </g>
 }
 

@@ -1,8 +1,8 @@
 import React from 'react';
 import { useGameContext } from '../../State/GameState';
-import { styles, Row, Column, Frame, genIntKey, colorByPlayer } from '../../Utils/CompUtils'
+import { styles, Row, Column, Frame, genIntKey, colorByPlayer, Text } from '../../Utils/CompUtils'
 import { Hexagonal, HexType } from '../../package/Entities/Models'
-import { StyleSheet, View, Text, Button, } from 'react-native';
+
 
 export default () => {
     const {gameState, dispatch} = useGameContext();

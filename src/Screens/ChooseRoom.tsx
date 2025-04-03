@@ -1,22 +1,20 @@
-import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View, Button, TextInput } from "react-native";
+
 import { useAppContext } from "../State/AppState";
 
-import { NavigatorParams } from "../Utils/Navigator";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { genIntKey, roomColor, Row, styles } from "../Utils/CompUtils";
+import { genIntKey, roomColor, Row, styles, View, Text, TextInput, ActionButton } from "../Utils/CompUtils";
 import { io } from "socket.io-client";
 import { useEffect, useState } from "react";
 import { SOCKET_URL } from "../Utils/ClientUtils";
 import { SocketTags } from "../package/Consts";
-var socket;
-export default function ChooseRoom({
-  navigation,
-}: NativeStackScreenProps<NavigatorParams, "ChooseRoom">) {
+import { useNavigate } from "react-router-dom";
+
+export default function ChooseRoom() {
   const appState = useAppContext();
   const [roomInput, setRoomInput] = useState<string>("");
   const [roomStatus, setRoomStatus] = useState<Record<string, string[]>>({});
+  const navigate = useNavigate();
   useEffect(() => {
+    if (!appState.username) navigate("/");
     appState.socketHandler = {
       socket: io(SOCKET_URL, {
         reconnectionAttempts: 3,
@@ -25,16 +23,16 @@ export default function ChooseRoom({
         },
       }),
     };
-    //appState.socketHandler.socket.on('connect_error', () => {console.log("Failed to connect to server"); appState.socketHandler.socket.disconnect();})
+    appState.socketHandler.socket.on('connect_error', () => {console.log("Failed to connect to server"); appState.socketHandler?.socket.disconnect();})
 
-    appState.socketHandler.socket.on(SocketTags.JOIN, (status) =>
+    appState.socketHandler.socket.on(SocketTags.JOIN, (status: Record<string, string[]>) =>
       {setRoomStatus(status); {console.log("roomStatus", status);}}
     );
-    appState.socketHandler.socket.on(SocketTags.LEAVE, (status) =>
+    appState.socketHandler.socket.on(SocketTags.LEAVE, (status: Record<string, string[]>) =>
       {setRoomStatus(status); {console.log("roomStatus", status);}}
     );
     appState.socketHandler.socket.on(SocketTags.START, () => {
-      navigation.navigate("Match");
+      navigate("/match");
     });
   }, []);
 
@@ -48,13 +46,13 @@ export default function ChooseRoom({
       <Text style={styles.text}> Hello {appState.username}</Text>
       </Row>
       
-      {Object.values(roomStatus).every(users => !users.includes(appState.username)) && <>
+      {Object.values(roomStatus).every(users => !users.includes(appState.username ?? "")) && <>
       <Row>
         <TextInput
         style={styles.input}
         onChangeText={setRoomInput}
         value={roomInput}
-      /><Button
+      /><ActionButton
       title="Create / join room"
       onPress={() => {
         roomInput.length > 0 &&
@@ -79,15 +77,15 @@ export default function ChooseRoom({
             {users.map((user) => (
               <Text style={styles.text} key={genIntKey()}>{user}</Text>
             ))}
-            {users.includes(appState.username) && (
+            {users.includes(appState.username ?? "") && (
               <>
-                <Button
+                <ActionButton
                   title="Start game"
                   onPress={() => {
                     appState?.socketHandler?.socket.emit(SocketTags.START);
                   }}
                 />
-                <Button
+                <ActionButton
                   title="Leave room"
                   onPress={() => {
                     appState?.socketHandler?.socket.emit(SocketTags.LEAVE, room);
@@ -95,9 +93,9 @@ export default function ChooseRoom({
                 />
               </>
             )}
-            {Object.values(roomStatus).every(users => !users.includes(appState.username)) && (
+            {Object.values(roomStatus).every(users => !users.includes(appState.username ?? "")) && (
               <>
-                <Button
+                <ActionButton
                   title="Join room"
                   onPress={() => {
                     appState?.socketHandler?.socket.emit(SocketTags.JOIN, room);

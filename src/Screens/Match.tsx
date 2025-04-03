@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
-import { StyleSheet, View, Text, Button } from 'react-native';
-import * as ScreenOrientation from 'expo-screen-orientation';
-import { Row, Column, Frame } from '../Utils/CompUtils'
+
+import { Row, Column, Frame, ActionButton, View } from '../Utils/CompUtils'
 import { GameContextProvider, useGameContext } from '../State/GameState';
 import { initializeGame } from '../package/Logic/Initialization';
 
@@ -19,14 +18,16 @@ import { availableRoads } from '../package/Logic/BoardLogic';
 import { GameActionTypes, validateActions } from '../package/Entities/GameActions';
 import { PlayerActionType } from '../package/Entities/PlayerActions';
 import { SocketTags } from '../package/Consts';
-
-
+import { VoiceChat } from './VoiceChat';
+import { useNavigate } from 'react-router-dom';
 
 export default function Match() {
-  const [availableVisible, setAvailableVisible] = useState<Structure | null>();
+  const [availableVisible, setAvailableVisible] = useState<Structure | null>(null);
   const [tradeOpen, setTradeOpen] = useState<boolean>(false);
+  const navigate = useNavigate();
+  const appState = useAppContext();
   useEffect(() => {
-    ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT);
+    if (!appState.username) navigate("/");
   },[]);
   return (
     <GameContextProvider initialState={initializeGame([])}>
@@ -37,10 +38,10 @@ export default function Match() {
         <ScoringTable/>
       </Row>
       <Row span={10}>
-        <Board availableVisible={availableVisible}/>
+      <Column><Board availableVisible={availableVisible}/></Column>
       </Row>
       <Row span={1.5} border={2}>
-          <Structures setAvailableVisible={setAvailableVisible}/>  
+          <Column><Row><Structures setAvailableVisible={setAvailableVisible}/></Row></Column>
       </Row>
       <Row span={1.5} border={2}>
         <Column span={5}>
@@ -79,19 +80,14 @@ const ServerLogic = () => {
     });
     appState.socketHandler?.socket.on(SocketTags.INIT, initAction => {  
       validateActions([initAction]) && dispatch([initAction]);
+      console.log("INIT", initAction);
     });
     appState.socketHandler?.socket.emit(SocketTags.INIT);
   }, []);
   return <></>
 }
 
-const ActionButton = ({title, onPress, color=null}) => {
-  return <Button
-    color={color}
-    title={title}
-    onPress={onPress}
-  />
-}
+
 
 const Exit = () => {
   return <ActionButton
@@ -101,13 +97,7 @@ const Exit = () => {
   />
 }
 
-const VoiceChat = () => {
-  return <ActionButton
-    title={"Voice\nChat"}
-    onPress={()=>console.log("menu")}
-    color="red"
-  />
-}
+
 
 const DevelopmentCard = () => {
   return <ActionButton
@@ -136,15 +126,12 @@ const FinishStep = () => {
 
 
 
-const styles = StyleSheet.create({
+export const styles: Record<string, React.CSSProperties> = {
   container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginHorizontal: "auto",
-    width: '100%',
-    height: '100%'
+    height:"100%",
+    backgroundColor: "#fff",
+    display: "flex",
+    flexDirection: "column",
   },
   circle: {
     width: 100,
@@ -164,5 +151,4 @@ const styles = StyleSheet.create({
     height: '100%',
     borderWidth: 1,
   }
-
-});
+};

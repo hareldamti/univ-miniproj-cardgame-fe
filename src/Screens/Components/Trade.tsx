@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useGameContext } from '../../State/GameState';
-import { styles, Row, Column, Frame, genIntKey, colorByPlayer } from '../../Utils/CompUtils'
+import { styles, Row, Column, Frame, genIntKey, colorByPlayer, View, Text, ActionButton, Pressable } from '../../Utils/CompUtils'
 import { Hexagonal, HexType, Resources } from '../../package/Entities/Models'
-import { StyleSheet, View, Text, Button, TextInput, Pressable, } from 'react-native';
+
 import { addResources, Brick, Grain, Lumber, Ore, subtractResources, Wool, zeroCost } from '../../package/Logic/GameUtils';
 import { useAppContext } from '../../State/AppState';
 import { SocketTags } from '../../package/Consts';
@@ -46,14 +46,14 @@ export default (props: {tradeOpen: boolean, setTradeOpen: React.Dispatch<React.S
                     <Text style={styles.text}>{r.label}</Text>
                 </Row>
                 <Row>
-                    <Button
+                    <ActionButton
                         color="green"
                         title="↑"
                         onPress={()=>setTradeOffer(tradeOffer => subtractResources(tradeOffer, r.resource))}
                     />
                 </Row>
                 <Row>
-                    <Button
+                    <ActionButton
                         color="red"
                         title="↓"
                         onPress={()=>setTradeOffer(tradeOffer => addResources(tradeOffer, r.resource))}
@@ -115,7 +115,7 @@ export default (props: {tradeOpen: boolean, setTradeOpen: React.Dispatch<React.S
         
         <Row span={2}>
             <Column span={1}>
-            <Button
+            <ActionButton
                 title="Submit request"
                 onPress={() => {
                     appState.socketHandler?.socket.emit(SocketTags.ACTION, {type: PlayerActionType.OfferTrade, trade: {offeredById: gameState.user.playerId, offeredToId: offeredUser, tradeDelta: tradeOffer}});
@@ -123,7 +123,7 @@ export default (props: {tradeOpen: boolean, setTradeOpen: React.Dispatch<React.S
                 }}/>
             </Column>
             <Column span={1}>
-            <Button
+            <ActionButton
                 title="Cancel"
                 onPress={() => {setTradeOffer(zeroCost); setOfferedUser(-1); props.setTradeOpen(false)}}/>
             </Column>
@@ -183,7 +183,7 @@ export default (props: {tradeOpen: boolean, setTradeOpen: React.Dispatch<React.S
             </Column>}
         </Row>
         <Row span={2}>
-            <Button
+            <ActionButton
                 title="Cancel"
                 onPress={() => appState.socketHandler?.socket.emit(SocketTags.ACTION, {type: PlayerActionType.RespondToTrade, accepted: false})}/>
         </Row>
@@ -244,12 +244,12 @@ export default (props: {tradeOpen: boolean, setTradeOpen: React.Dispatch<React.S
         </Row>
         <Row span={2}>
             <Column span={1}>
-            <Button
+            <ActionButton
                 title="Accept"
                 onPress={() => appState.socketHandler?.socket.emit(SocketTags.ACTION, {type: PlayerActionType.RespondToTrade, accepted: true})}/>
             </Column>
             <Column span={1}>
-            <Button
+            <ActionButton
                 title="Decline"
                 onPress={() => appState.socketHandler?.socket.emit(SocketTags.ACTION, {type: PlayerActionType.RespondToTrade, accepted: false})}/>
             </Column>
