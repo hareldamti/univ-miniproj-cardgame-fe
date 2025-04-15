@@ -5,5 +5,5 @@ export enum SocketTags {
     START = "START",
     JOIN = "JOIN_ROOM",
     LEAVE = "LEAVE_ROOM",
-    VOICECHAT = "VOICE_CHAT"
+    AUDIO = "AUDIO_DATA"
 }

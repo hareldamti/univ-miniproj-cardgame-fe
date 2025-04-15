@@ -62,7 +62,7 @@ export const City = (props: PressableSvg) =>
 
 export const Road = (props: PressableSvg) => 
     <path onClick={props.onPress}
-        d="M14 39.7v-80H3.5v20h-7v-20H-14v80H-3.5v-20h7v20H14Zm7-90v100H16.8595 14-14-16.8595-21v-100h4.1405H-14 14h2.8595H21ZM-3.5 9.7h7v-20h-7v20Z"
+        d="M7 39V-40H-3V-40H-7V40H-3 3.5V40H7ZM21-50.3V49.7H16.8595 14-14-16.8595-21V-50.3H-16.8595-14 14 16.8595 21ZM-3 33H3.5V-32H-3.5V33Z"
         fill={props.color}
         strokeWidth={5}
         stroke={"black"}

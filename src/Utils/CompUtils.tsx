@@ -1,5 +1,5 @@
 import { PropsWithChildren } from "react";
-import { HexType } from "../package/Entities/Models";
+import { DevelopmentCardTypes, HexType } from "../package/Entities/Models";
 
 interface Span {
   span?: number;
@@ -18,16 +18,34 @@ export const View = (
 ): React.JSX.Element => <div style={props.style}>{props.children}</div>;
 
 export const Pressable = (
-  props: PropsWithChildren<{ style?: React.CSSProperties, onPress: React.MouseEventHandler }>
-): React.JSX.Element => <div style={props.style} onClick={props.onPress}>{props.children}</div>;
+  props: PropsWithChildren<{
+    style?: React.CSSProperties;
+    onPress: React.MouseEventHandler;
+  }>
+): React.JSX.Element => (
+  <div style={props.style} onClick={props.onPress}>
+    {props.children}
+  </div>
+);
 
 export const Text = (
   props: PropsWithChildren<{ style?: React.CSSProperties }>
 ): React.JSX.Element => <div style={props.style}>{props.children}</div>;
 
 export const TextInput = (
-  props: PropsWithChildren<{ style?: React.CSSProperties, onChangeText: (newText: string) => void, value: string }>
-): React.JSX.Element => <input type="text" style={props.style} value={props.value} onChange={e => props.onChangeText(e.target.value)}></input>;
+  props: PropsWithChildren<{
+    style?: React.CSSProperties;
+    onChangeText: (newText: string) => void;
+    value: string;
+  }>
+): React.JSX.Element => (
+  <input
+    type="text"
+    style={props.style}
+    value={props.value}
+    onChange={(e) => props.onChangeText(e.target.value)}
+  ></input>
+);
 
 export const Row = (props: PropsWithChildren<Span>): React.JSX.Element => (
   <View
@@ -66,8 +84,25 @@ export const Frame = (
   </View>
 );
 
-export const ActionButton = (props: { color?: string, title: string, onPress: React.MouseEventHandler } ) => {
-  return <button style={{...styles.button, backgroundColor: props.color ?? "#2ec0e8"}} onClick={props.onPress} >{props.title}</button>;
+export const ActionButton = (
+  props: {
+    color?: string;
+    title: string;
+    full?: boolean;
+    small?: boolean;
+    onPress?: React.MouseEventHandler;
+    onHold?: React.TouchEventHandler;
+    onRelease?: React.TouchEventHandler;
+  },
+) => {
+  return (
+    <button
+      style={{ ...styles.button, ...(props.full ? styles.full : {}), backgroundColor: props.color ?? "#2ec0e8", ...(props.small ? {padding: 2} : {}) }}
+      onClick={props.onPress} onTouchStart={props.onHold} onTouchEnd={props.onRelease} onTouchCancel={props.onRelease}
+    >
+      {props.title}
+    </button>
+  );
 };
 
 export interface PressableSvg {
@@ -81,20 +116,26 @@ export interface PressableSvg {
 }
 
 export interface PageProps {
-  setPage: React.Dispatch<React.SetStateAction<string>>
+  setPage: React.Dispatch<React.SetStateAction<string>>;
 }
 
 export const styles: Record<string, React.CSSProperties> = {
   container: {
-    height:"100%",
+    height: "100%",
     backgroundColor: "#fff",
     display: "flex",
     flexDirection: "column",
+    userSelect: "none"
   },
   button: {
     color: "white",
     border: 0,
-    padding: "7px 15px 7px 15px"
+    padding: "7px 15px 7px 15px",
+    userSelect: "none"
+  },
+  full: {
+        height: "100%",
+        width: "100%"
   },
   row: {
     flexDirection: "row",
@@ -111,6 +152,7 @@ export const styles: Record<string, React.CSSProperties> = {
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
+    height: "100%",
     flexGrow: 1,
     paddingLeft: 1, //
     paddingRight: 1, //
@@ -183,7 +225,17 @@ export const styles: Record<string, React.CSSProperties> = {
     width: "100%",
     height: "100%",
     maxWidth: "100%",
-    maxHeight: "100%"
+    maxHeight: "100%",
+  },
+  card: {
+    backgroundColor: 'white',
+    borderRadius: '5px',
+    height: '6rem',
+    width: '5rem',
+    marginTop: 2
+  },
+  smallText: {
+    fontSize: 11,
   }
 };
 
@@ -201,6 +253,27 @@ export const colorByPlayer = (i?: number) => {
       return "";
   }
 };
+
+export const colorByCard = (type: DevelopmentCardTypes) => {
+  switch (type) {
+		case DevelopmentCardTypes.RoadBuilding:
+			return "#fc2c03";
+		case DevelopmentCardTypes.YearOfPlenty:
+			return "#fca903";
+		case DevelopmentCardTypes.Monopoly:
+			return "#aa00aa";
+		case DevelopmentCardTypes.University:
+			return "#41fc03";
+		case DevelopmentCardTypes.Market:
+			return "#03fcc2";
+		case DevelopmentCardTypes.GreatHall:
+			return "#03c6fc";
+		case DevelopmentCardTypes.Chapel:
+			return "#036ffc";
+		case DevelopmentCardTypes.Library:
+			return "#2d03fc";
+  }
+}
 
 export const hexagonalToColor = (h: HexType) => {
   switch (h) {

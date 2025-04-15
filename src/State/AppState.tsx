@@ -4,8 +4,9 @@ import { io, Socket } from "socket.io-client";
 
 export interface AppState {
     username?: string,
-    roomId?: number,
+    roomId?: string,
     socketHandler?: SocketHandler,
+    page?: string,
 }
 
 export const AppContext = createContext<AppState>({});

@@ -1,13 +1,11 @@
 import { useGameContext } from '../../State/GameState';
 import { availableStuctureColor, colorByPlayer, genIntKey, hexagonalToColor, markedHexColor, PressableSvg, styles } from '../../Utils/CompUtils'
-import { Coords, EdgeLocation, Hexagonal, HexType, NodeLocation } from '../../package/Entities/Models'
+import { Coords, EdgeLocation, Hexagonal, HexType, NodeLocation, SpecialAction } from '../../package/Entities/Models'
 
 import { City, Dice, Road, Settlement, Structure } from './Structures';
 import { useAppContext } from '../../State/AppState';
 import { useMemo, useState } from 'react';
 import { availableRoads, availableStructures } from '../../package/Logic/BoardLogic';
-import { createEdge, createNode, isEdgeLegal } from '../../package/Logic/BoardUtils';
-import { GameActionTypes } from '../../package/Entities/GameActions';
 import { SocketTags } from '../../package/Consts';
 import { PlayerActionType } from '../../package/Entities/PlayerActions';
 import { getCurrentPlayer, getRound } from '../../package/Entities/State';
@@ -20,7 +18,7 @@ export default (props: {availableVisible: Structure | null}) => {
         Structures: useMemo(() => {
             return availableStructures(gameState.user.playerId, gameState)}, [gameState.Table.Settlements, gameState.Table.Cities]),
         Roads: useMemo(() => {
-            return availableRoads(gameState.user.playerId, gameState)}, [gameState.Table.Roads]),
+            return availableRoads(gameState.user.playerId, gameState)}, [gameState.players[gameState.user.playerId]?.ActiveSpecialActions, gameState.Table.Roads]),
         canBuyCity: useMemo(() => {
             return canBuy(gameState, gameState.user.playerId, cityCost);
         }, [gameState.players]),
@@ -29,12 +27,11 @@ export default (props: {availableVisible: Structure | null}) => {
         }, [gameState.players]),
         canBuyRoad: useMemo(() => {
             return canBuy(gameState, gameState.user.playerId, roadCost);
-        }, [gameState.players])
+        }, [gameState.players]),
+        buildRoadCardActive: useMemo(() => 
+            gameState.players[gameState.user.playerId]?.ActiveSpecialActions.includes(SpecialAction.BuildRoad)
+        , [gameState])
     }
-
-    // for debugging:
-    const [hex, setHex] = useState<Coords[]>([]);
-    //
 
     return <svg style={styles.svg} viewBox="0 0 600 640">
         {   // Hexagonals
@@ -74,7 +71,7 @@ export default (props: {availableVisible: Structure | null}) => {
         }
 
         {   // Available
-            ((available.canBuyRoad && props.availableVisible == Structure.Road) || (getCurrentPlayer(gameState) == gameState.user.playerId && (getRound(gameState) == 0 || getRound(gameState) == 3))) && 
+            ((available.canBuyRoad && props.availableVisible == Structure.Road) || available.buildRoadCardActive || (getCurrentPlayer(gameState) == gameState.user.playerId && (getRound(gameState) == 0 || getRound(gameState) == 3))) && 
             available.Roads.map(road => {
                 let [x, y, theta] = EdgeCoords(road);
                 return <Road key={genIntKey()} color={availableStuctureColor} x={x} y={y} theta={theta}
@@ -102,14 +99,12 @@ export default (props: {availableVisible: Structure | null}) => {
         {
             gameState.lastDice &&
             <g>
-                <Dice x={150} y={600} theta={-10} number={gameState.lastDice[0]}/>
-                <Dice x={210} y={600} theta={20} number={gameState.lastDice[1]}/>
+                <Dice key={1} x={150} y={600} theta={-10} number={gameState.lastDice[0]}/>
+                <Dice key={2} x={210} y={600} theta={20} number={gameState.lastDice[1]}/>
             </g>
         }
     </svg>
   }
-
-// const playerIdToColor
 
 const hexCoords = (rowIdx: number, colIdx: number) => [Math.abs(rowIdx - 3) * 50.0 + colIdx * 100, rowIdx * 85.0 + 60];
 const NodeCoords = (n: NodeLocation) => {

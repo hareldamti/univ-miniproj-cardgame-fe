@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 
-import { Row, Column, Frame, ActionButton, View } from '../Utils/CompUtils'
+import { Row, Column, Text, ActionButton, View, styles } from '../Utils/CompUtils'
 import { GameContextProvider, useGameContext } from '../State/GameState';
 import { initializeGame } from '../package/Logic/Initialization';
 
@@ -20,10 +20,12 @@ import { PlayerActionType } from '../package/Entities/PlayerActions';
 import { SocketTags } from '../package/Consts';
 import { VoiceChat } from './VoiceChat';
 import { useNavigate } from 'react-router-dom';
+import Development from './Components/Development';
 
 export default function Match() {
   const [availableVisible, setAvailableVisible] = useState<Structure | null>(null);
   const [tradeOpen, setTradeOpen] = useState<boolean>(false);
+  const [developmentOpen, setDevelopmentOpen] = useState<boolean>(false);
   const navigate = useNavigate();
   const appState = useAppContext();
   useEffect(() => {
@@ -34,6 +36,8 @@ export default function Match() {
     <ServerLogic/>
     <View style={styles.container}>
       <Trade tradeOpen={tradeOpen} setTradeOpen={setTradeOpen}/>
+      <Development developmentOpen={developmentOpen} setDevelopmentOpen={setDevelopmentOpen}/>
+      <GameEnded/>
       <Row span={1} border={2}>
         <ScoringTable/>
       </Row>
@@ -50,13 +54,13 @@ export default function Match() {
         </Row>
       <Row span={1.5} border={2}>
         <Column span={1}>
-          <Exit/>
+          <Quit/>
         </Column>
         <Column span={1}>
           <VoiceChat/>
         </Column>
         <Column span={1}>
-          <DevelopmentCard/>
+          <DevelopmentButton setDevelopmentOpen={setDevelopmentOpen}/>
         </Column>
         <Column span={1}>
           <TradeButton setTradeOpen={setTradeOpen}/>
@@ -87,28 +91,48 @@ const ServerLogic = () => {
   return <></>
 }
 
+const GameEnded = () => {
+  const {gameState, dispatch} = useGameContext();
+  const appState = useAppContext();
+  const navigate = useNavigate();
+  if (gameState.turn != -1) return <></>;
+  return <View style={styles.floatingTradeWindow}>
+    <Column>
+    <Row span={1}><Text style={styles.textBoldHeader}>Game ended!</Text></Row>
+    { gameState.winnerId !== undefined && <Row span={1}><Text style={styles.textHeader}>The winner is {gameState.players[gameState.winnerId].username} 🎉</Text></Row>}
+    { gameState.quitterId !== undefined && <Row span={1}><Text style={styles.textHeader}>{gameState.players[gameState.quitterId].username} quit 👎</Text></Row>}
+    <Row span={1}><ActionButton title={"Back to\nlobby"} onPress={()=>{
+      appState.page="lobby";
+      navigate("/lobby");
+      }}/></Row>
+    </Column>
+  </View>
+}
 
-
-const Exit = () => {
+const Quit = () => {
+  const appState = useAppContext();
   return <ActionButton
-    title={"Exit\nGame"}
-    onPress={()=>console.log("menu")}
+    full
+    title={"Quit\nGame"}
+    onPress={() => appState.socketHandler?.socket.emit(SocketTags.ACTION, { type: PlayerActionType.Quit })}
     color="black"
   />
 }
 
 
 
-const DevelopmentCard = () => {
+const DevelopmentButton = (props: {setDevelopmentOpen: React.Dispatch<React.SetStateAction<boolean>>}) => {
   return <ActionButton
+    full
     title={"Dev\nCards"}
-    onPress={()=>console.log("dev card")}
+    onPress={() => props.setDevelopmentOpen(curr => !curr)}
   />
 }
 
 const TradeButton = (props: {setTradeOpen: React.Dispatch<React.SetStateAction<boolean>>}) => {
   return <ActionButton
-    title={"Open\nTrade"}
+    full
+    title={"Trade\nPanel"}
     onPress={() => props.setTradeOpen(curr => !curr)}
   />
 }
@@ -116,39 +140,10 @@ const TradeButton = (props: {setTradeOpen: React.Dispatch<React.SetStateAction<b
 const FinishStep = () => {
   const appState = useAppContext();
     return <ActionButton
+    full
     title={"Finish\nStep"}
     onPress={()=> {
       emitAction(appState, {type: PlayerActionType.FinishStep});
     }}
   />
 }
-
-
-
-
-export const styles: Record<string, React.CSSProperties> = {
-  container: {
-    height:"100%",
-    backgroundColor: "#fff",
-    display: "flex",
-    flexDirection: "column",
-  },
-  circle: {
-    width: 100,
-    height: 100,
-    borderRadius: '50%',
-    backgroundColor: "red",
-  },
-  rectangle: {
-    width: 100 * 2,
-    height: 100,
-    backgroundColor: "red",
-  },
-  frame: {
-    display: 'flex',
-    borderColor: "black",
-    width:'100%',
-    height: '100%',
-    borderWidth: 1,
-  }
-};
