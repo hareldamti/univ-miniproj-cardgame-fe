@@ -13,7 +13,7 @@ import Trade from './Components/Trade';
 import React from 'react';
 import { useAppContext } from '../State/AppState';
 import { io, Socket } from 'socket.io-client';
-import { emitAction, SOCKET_URL } from '../Utils/ClientUtils';
+import { emitAction } from '../Utils/ClientUtils';
 import { availableRoads } from '../package/Logic/BoardLogic';
 import { GameActionTypes, validateActions } from '../package/Entities/GameActions';
 import { PlayerActionType } from '../package/Entities/PlayerActions';

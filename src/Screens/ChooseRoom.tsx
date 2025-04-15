@@ -4,7 +4,6 @@ import { useAppContext } from "../State/AppState";
 import { genIntKey, roomColor, Row, styles, View, Text, TextInput, ActionButton, Column } from "../Utils/CompUtils";
 import { io } from "socket.io-client";
 import { useEffect, useState } from "react";
-import { SOCKET_URL } from "../Utils/ClientUtils";
 import { SocketTags } from "../package/Consts";
 import { useNavigate } from "react-router-dom";
 
@@ -18,7 +17,7 @@ export default function ChooseRoom() {
   useEffect(() => {
     if (!appState.username) navigate("/");
     appState.socketHandler = {
-      socket: io(SOCKET_URL, {
+      socket: io(process.env.SOCKET_URL, {
         reconnectionAttempts: 3,
         auth: {
           token: appState.username,
