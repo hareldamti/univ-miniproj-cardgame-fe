@@ -72,7 +72,9 @@ export const VoiceChat = () => {
 };
 
 export function useVoiceChat(socket: any, setIsRecording: React.Dispatch<React.SetStateAction<boolean>>) {
-  const recorderRef = useRef<Recorder | null>(null);
+  const recorderRef1 = useRef<Recorder | null>(null);
+  const recorderRef2 = useRef<Recorder | null>(null);
+  const toggleRef = useRef<boolean>(false);
   const audioContextRef = useRef<AudioContext | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -86,22 +88,33 @@ export function useVoiceChat(socket: any, setIsRecording: React.Dispatch<React.S
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       streamRef.current = stream;
 
-      const recorder = new Recorder(audioCtx);
-
-      await recorder.init(stream);
-      recorder.start();
-      recorderRef.current = recorder;
+      const recorder1 = new Recorder(audioCtx);
+      const recorder2 = new Recorder(audioCtx);
+      await recorder1.init(stream);
+      await recorder2.init(stream);
+      recorder1.start();
+      recorderRef1.current = recorder1;
+      recorderRef2.current = recorder2;
 
       intervalRef.current = setInterval(() => {
-        const newRecorder = new Recorder(audioCtx);
-        recorder.init(stream);
-        recorder.start();
-        recorderRef.current?.stop().then(({ blob }) => {
-          recorderRef.current = newRecorder;
-          blob.arrayBuffer().then((buffer) => {
-            socket.emit(SocketTags.AUDIO, Array.from(new Uint8Array(buffer)));
+        if (toggleRef.current) {
+          recorderRef1.current?.start();
+          recorderRef2.current?.stop().then(({ blob }) => {
+            blob.arrayBuffer().then((buffer) => {
+              socket.emit(SocketTags.AUDIO, Array.from(new Uint8Array(buffer)));
+            });
           });
-        });
+          toggleRef.current = false;
+        }
+        else {
+          recorderRef2.current?.start();
+          recorderRef1.current?.stop().then(({ blob }) => {
+            blob.arrayBuffer().then((buffer) => {
+              socket.emit(SocketTags.AUDIO, Array.from(new Uint8Array(buffer)));
+            });
+          });
+          toggleRef.current = true;
+        }
       }, 1000); // Send every 1 sec
     }
     catch (error) { window.alert((error as any).message); }
@@ -109,8 +122,10 @@ export function useVoiceChat(socket: any, setIsRecording: React.Dispatch<React.S
   };
 
   const leaveVoiceChat = () => {
-    recorderRef.current?.stop();
-    recorderRef.current = null;
+    recorderRef1.current?.stop();
+    recorderRef1.current = null;
+    recorderRef2.current?.stop();
+    recorderRef2.current = null;
 
     if (intervalRef.current) clearInterval(intervalRef.current);
 
