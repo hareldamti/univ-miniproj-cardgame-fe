@@ -93,8 +93,11 @@ export function useVoiceChat(socket: any, setIsRecording: React.Dispatch<React.S
       recorderRef.current = recorder;
 
       intervalRef.current = setInterval(() => {
+        const newRecorder = new Recorder(audioCtx);
+        recorder.init(stream);
+        recorder.start();
         recorderRef.current?.stop().then(({ blob }) => {
-          recorderRef.current?.start();
+          recorderRef.current = newRecorder;
           blob.arrayBuffer().then((buffer) => {
             socket.emit(SocketTags.AUDIO, Array.from(new Uint8Array(buffer)));
           });
