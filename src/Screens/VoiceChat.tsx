@@ -6,9 +6,9 @@ import Recorder from 'recorder-js';
 
 export const VoiceChat = () => {
   const appState = useAppContext();
-  const {joinVoiceChat, leaveVoiceChat} = useVoiceChat(appState.socketHandler?.socket);
   const [audioCtx, setAudioCtx] = useState<AudioContext>();
   const [isRecording, setIsRecording] = useState(false);
+  const {joinVoiceChat, leaveVoiceChat} = useVoiceChat(appState.socketHandler?.socket, setIsRecording);
   const [recorder, setRecorder] = useState<Recorder>();
   const [debugMsg, setDebugMsg] = useState("");
   const startRecording = async() => {
@@ -66,12 +66,12 @@ export const VoiceChat = () => {
   }, [appState]);
 
   return (<>
-    <ActionButton full title={"🎙️"} color={!isRecording ? "red" : "#AA0000"} onPress={ isRecording ? leaveVoiceChat : joinVoiceChat }/>
+    <ActionButton full title={!isRecording ? "🎙️" : "🔇"} color={!isRecording ? "red" : "#AA0000"} onPress={ isRecording ? leaveVoiceChat : joinVoiceChat }/>
     {debugMsg}</>
   );
 };
 
-export function useVoiceChat(socket: any) {
+export function useVoiceChat(socket: any, setIsRecording: React.Dispatch<React.SetStateAction<boolean>>) {
   const recorderRef = useRef<Recorder | null>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
@@ -85,7 +85,6 @@ export function useVoiceChat(socket: any) {
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
     streamRef.current = stream;
 
-    const input = audioCtx.createMediaStreamSource(stream);
     const recorder = new Recorder(audioCtx);
 
     await recorder.init(stream);
@@ -100,6 +99,7 @@ export function useVoiceChat(socket: any) {
         });
       });
     }, 1000); // Send every 1 sec
+    setIsRecording(true);
   };
 
   const leaveVoiceChat = () => {
@@ -110,6 +110,7 @@ export function useVoiceChat(socket: any) {
 
     streamRef.current?.getTracks().forEach((track) => track.stop());
     streamRef.current = null;
+    setIsRecording(false);
   };
 
   useEffect(() => {
