@@ -78,27 +78,30 @@ export function useVoiceChat(socket: any, setIsRecording: React.Dispatch<React.S
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const joinVoiceChat = async () => {
-    const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
-    const audioCtx = new AudioContext();
-    audioContextRef.current = audioCtx;
+    try {
+      const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
+      const audioCtx = new AudioContext();
+      audioContextRef.current = audioCtx;
 
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    streamRef.current = stream;
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      streamRef.current = stream;
 
-    const recorder = new Recorder(audioCtx);
+      const recorder = new Recorder(audioCtx);
 
-    await recorder.init(stream);
-    recorder.start();
-    recorderRef.current = recorder;
+      await recorder.init(stream);
+      recorder.start();
+      recorderRef.current = recorder;
 
-    intervalRef.current = setInterval(() => {
-      recorderRef.current?.stop().then(({ blob }) => {
-        recorderRef.current?.start();
-        blob.arrayBuffer().then((buffer) => {
-          socket.emit(SocketTags.AUDIO, Array.from(new Uint8Array(buffer)));
+      intervalRef.current = setInterval(() => {
+        recorderRef.current?.stop().then(({ blob }) => {
+          recorderRef.current?.start();
+          blob.arrayBuffer().then((buffer) => {
+            socket.emit(SocketTags.AUDIO, Array.from(new Uint8Array(buffer)));
+          });
         });
-      });
-    }, 1000); // Send every 1 sec
+      }, 1000); // Send every 1 sec
+    }
+    catch (error) { window.alert(JSON.stringify(error)); }
     setIsRecording(true);
   };
 
