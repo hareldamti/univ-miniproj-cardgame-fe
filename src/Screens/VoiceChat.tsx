@@ -52,6 +52,6 @@ export const VoiceChat = () => {
   }, [appState]);
 
   return (
-    <ActionButton full title={"🎙️"} color={!isRecording ? "red" : "#AA0000"} onHold={startRecording} onRelease={stopRecording}/>
+    <ActionButton full title={"🎙️"} color={!isRecording ? "red" : "#AA0000"} onPress={isRecording ? stopRecording : startRecording}/>
   );
 };

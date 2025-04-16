@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useGameContext } from '../../State/GameState';
-import { styles, Row, Column, Frame, genIntKey, colorByPlayer, View, Text, ActionButton, Pressable } from '../../Utils/CompUtils'
+import { styles, Row, Column, Frame, genIntKey, colorByPlayer, View, Text, ActionButton } from '../../Utils/CompUtils'
 import { Hexagonal, HexType, Resources } from '../../package/Entities/Models'
 
 import { addResources, Brick, Grain, Lumber, Ore, subtractResources, Wool, zeroCost } from '../../package/Logic/GameUtils';
@@ -22,11 +22,11 @@ export default (props: {tradeOpen: boolean, setTradeOpen: React.Dispatch<React.S
         <Row span={2}>
             {gameState.players.filter(player => player.id != gameState.user.playerId).map(player => 
                 <Column span={1}>
-                    <Pressable style={{justifyContent: 'center', alignItems: 'center', width: '100%', height: '100%'}} onPress={()=>setOfferedUser(player.id)}>
-                    <View style={{justifyContent: 'center', width: '90%', height: '90%', backgroundColor: colorByPlayer(player.id), borderWidth: player.id == offeredUser ? 5 : 0}}>
+                    <View style={{justifyContent: 'center', alignItems: 'center', width: '100%', height: '100%'}}>
+                    <View onPress={()=>setOfferedUser(player.id)} style={{justifyContent: 'center', width: '90%', height: '90%', backgroundColor: colorByPlayer(player.id), borderWidth: player.id == offeredUser ? 5 : 0}}>
                     <Text style={styles.textHeader}>
                     {player.username}
-                </Text></View></Pressable>
+                </Text></View></View>
                 </Column>
             )}
         </Row>

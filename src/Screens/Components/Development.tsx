@@ -10,7 +10,6 @@ import {
   View,
   Text,
   ActionButton,
-  Pressable,
   colorByCard,
 } from "../../Utils/CompUtils";
 import {

@@ -14,19 +14,8 @@ export const genIntKey = () => {
 };
 
 export const View = (
-  props: PropsWithChildren<{ style?: React.CSSProperties }>
-): React.JSX.Element => <div style={props.style}>{props.children}</div>;
-
-export const Pressable = (
-  props: PropsWithChildren<{
-    style?: React.CSSProperties;
-    onPress: React.MouseEventHandler;
-  }>
-): React.JSX.Element => (
-  <div style={props.style} onClick={props.onPress}>
-    {props.children}
-  </div>
-);
+  props: PropsWithChildren<{ style?: React.CSSProperties, onPress?: React.MouseEventHandler; }>
+): React.JSX.Element => <div style={props.style} onClick={props.onPress}>{props.children}</div>;
 
 export const Text = (
   props: PropsWithChildren<{ style?: React.CSSProperties }>
