@@ -101,7 +101,7 @@ export function useVoiceChat(socket: any, setIsRecording: React.Dispatch<React.S
         });
       }, 1000); // Send every 1 sec
     }
-    catch (error) { window.alert(JSON.stringify(error)); }
+    catch (error) { window.alert((error as any).message); }
     setIsRecording(true);
   };
 
