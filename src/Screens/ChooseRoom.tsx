@@ -18,7 +18,7 @@ export default function ChooseRoom() {
   useEffect(() => {
     if (!appState.username) navigate("/");
     appState.socketHandler = {
-      socket: io(`wss://${SOCKET_URL}`, {
+      socket: io(`wss://${process.env.SOCKET_URL}`, {
         reconnectionAttempts: 3,
         withCredentials: true,
         auth: {
