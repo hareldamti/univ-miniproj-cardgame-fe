@@ -66,7 +66,7 @@ export const VoiceChat = () => {
   }, [appState]);
 
   return (<>
-    <ActionButton full title={!isRecording ? "🎙️" : "🔇"} color={!isRecording ? "red" : "#AA0000"} onPress={ isRecording ? leaveVoiceChat : joinVoiceChat }/>
+    <ActionButton full title={!isRecording ? "🎙️" : "🔇"} color={!isRecording ? "red" : "#AA0000"} onTouchStart={ isRecording ? leaveVoiceChat : joinVoiceChat } />
     {debugMsg}</>
   );
 };
