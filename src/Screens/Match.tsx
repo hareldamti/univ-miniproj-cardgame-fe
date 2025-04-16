@@ -103,6 +103,7 @@ const GameEnded = () => {
     { gameState.winnerId !== undefined && <Row span={1}><Text style={styles.textHeader}>The winner is {gameState.players[gameState.winnerId].username} 🎉</Text></Row>}
     { gameState.quitterId !== undefined && <Row span={1}><Text style={styles.textHeader}>{gameState.players[gameState.quitterId].username} quit 👎</Text></Row>}
     <Row span={1}><ActionButton title={"Back to\nlobby"} onPress={()=>{
+      appState.socketHandler?.socket.emit(SocketTags.LEAVE, appState.roomId);
       navigate("/lobby");
       }}/></Row>
     </Column>

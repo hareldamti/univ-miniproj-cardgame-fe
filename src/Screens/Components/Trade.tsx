@@ -22,8 +22,8 @@ export default (props: {tradeOpen: boolean, setTradeOpen: React.Dispatch<React.S
         <Row span={2}>
             {gameState.players.filter(player => player.id != gameState.user.playerId).map(player => 
                 <Column span={1}>
-                    <View style={{justifyContent: 'center', borderWidth: player.id == offeredUser ? 5 : 0, alignItems: 'center', width: '100%', height: '100%'}}>
-                    <ActionButton full title={player.username} color={colorByPlayer(player.id)} onPress={()=>setOfferedUser(player.id)}/>
+                    <View style={{justifyContent: 'center', alignItems: 'center', width: '100%', height: '100%'}}>
+                    <ActionButton full title={`${player.id}`} color={ player.id == offeredUser ? 'black' : colorByPlayer(player.id)} onPress={()=>setOfferedUser(player.id)}/>
                     </View>
                 </Column>
             )}
@@ -116,6 +116,7 @@ export default (props: {tradeOpen: boolean, setTradeOpen: React.Dispatch<React.S
             <ActionButton
                 title="Submit request"
                 onPress={() => {
+                    if (offeredUser == -1) return;
                     appState.socketHandler?.socket.emit(SocketTags.ACTION, {type: PlayerActionType.OfferTrade, trade: {offeredById: gameState.user.playerId, offeredToId: offeredUser, tradeDelta: tradeOffer}});
                     setTradeOffer(zeroCost); setOfferedUser(-1); props.setTradeOpen(false);
                 }}/>
@@ -191,10 +192,10 @@ export default (props: {tradeOpen: boolean, setTradeOpen: React.Dispatch<React.S
         <View style={styles.floatingAcceptTradeWindow}>
             <Row span={1}><Text style={styles.textBoldHeader}>{gameState.players[trade.offeredById].username} wants to trade</Text></Row>
             <Row span={1}>
-            <Text style={styles.textHeader}>You give:</Text>
+            <Text style={styles.textHeader}>You get:</Text>
             </Row>
             <Row span={1}>
-            {tradeOffer.lumber < 0 && <Column span={1}>
+            {trade.tradeDelta.lumber < 0 && <Column span={1}>
                 <Row span={1}><Text style={styles.text}>Lumber</Text></Row>
                 <Row span={1}><Text style={styles.text}>{-trade.tradeDelta.lumber}</Text></Row>
             </Column>}
@@ -216,7 +217,7 @@ export default (props: {tradeOpen: boolean, setTradeOpen: React.Dispatch<React.S
             </Column>}
         </Row>
         <Row span={1}>
-            <Text style={styles.textHeader}>You get:</Text>
+            <Text style={styles.textHeader}>You give:</Text>
         </Row>
         <Row span={1}>
             {trade.tradeDelta.lumber > 0 && <Column span={1}>

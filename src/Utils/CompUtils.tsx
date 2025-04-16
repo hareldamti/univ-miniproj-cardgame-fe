@@ -182,7 +182,6 @@ export const styles: Record<string, React.CSSProperties> = {
     width: "90%",
     height: "70%",
     borderRadius: 40,
-    flex: 1,
     alignItems: "center",
     justifyContent: "center",
     marginLeft: "auto", //
@@ -200,7 +199,6 @@ export const styles: Record<string, React.CSSProperties> = {
     width: "40%",
     height: "45%",
     borderRadius: 20,
-    flex: 1,
     alignItems: "center",
     justifyContent: "center",
     marginLeft: "auto", //

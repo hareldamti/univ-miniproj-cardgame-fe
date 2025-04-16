@@ -113,7 +113,7 @@ export function useVoiceChat(socket: any) {
   };
 
   useEffect(() => {
-    socket.on(SocketTags.AUDIO, async (props: { data: number[]; senderId: string }) => {
+    socket?.on(SocketTags.AUDIO, async (props: { data: number[]; senderId: string }) => {
       if (socket.id === props.senderId) return;
 
       const array = new Uint8Array(props.data);

@@ -6,7 +6,7 @@ import { availableRoads, availableStructures } from "./BoardLogic";
 import { hasEdge, hasNode } from "./BoardUtils";
 import { addResources, canBuy, cardCost, cityCost, developmentCardCost, dotResources, getWinner, multiplyResources, negateResources, resourceAt, roadCost, rollDice, settlementCost, zeroCost } from "./GameUtils";
 
-export function handlePlayerAction(action: PlayerAction, playerId: number, gameState: GameState): GameAction[] {
+export function handlePlayerAction(action: PlayerAction, playerId: number, gameState: GameState): {updates: GameAction[], updatedGame: GameState} {
     let updates: GameAction[] = [];
     switch (action.type) {
         case PlayerActionType.RespondToTrade:
@@ -18,9 +18,8 @@ export function handlePlayerAction(action: PlayerAction, playerId: number, gameS
     }
     if (getCurrentPlayer(gameState) != playerId) {
         console.log(`Player ${playerId} tried to play ${PlayerActionType[action.type]} at player ${getCurrentPlayer(gameState)}'s turn`);
-        return [];
     }
-    switch (action.type) {
+    else switch (action.type) {
         case PlayerActionType.BuildSettlement:
             updates = buildSettlement(action.settlement, playerId, gameState);
             break;
@@ -51,10 +50,10 @@ export function handlePlayerAction(action: PlayerAction, playerId: number, gameS
     }
     const updatedGame = gameReducer(gameState, updates);
     const winnerPlayerId = getWinner(updatedGame);
-    if (winnerPlayerId) {
+    if (winnerPlayerId != undefined) {
         updates.push({ type: GameActionTypes.FinishGame, payload: { winnerPlayerId }});
     }
-    return updates;
+    return {updates, updatedGame};
 
 }
 
@@ -136,7 +135,6 @@ function offerTrade(trade: Trade, playerId: number, gameState: GameState): GameA
 function respondToTrade(accepted: boolean, playerId: number, gameState: GameState): GameAction[] {
     const trades_ = gameState.openTrades.filter(trade => trade.offeredById == playerId);
     if (trades_.length > 0) return [{type: GameActionTypes.CloseTrade, payload: {trade: trades_[0]}}];
-    
     const trades = gameState.openTrades.filter(trade => trade.offeredToId == playerId);
     if (trades.length == 0) return [];
     const trade = trades[0];

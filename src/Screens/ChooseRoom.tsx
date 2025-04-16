@@ -42,9 +42,9 @@ export default function ChooseRoom() {
     
   }, []);
   useEffect(() => {
-    if (appState.roomId) {appState.socketHandler?.socket.emit(SocketTags.LEAVE, appState.roomId);}
+    if (appState.roomId) {appState.socketHandler?.socket.emit(SocketTags.LEAVE);}
     appState.roomId = undefined;
-  }, [appState.page]);
+  }, []);
   return (
     <View style={styles.container}>
       <Row></Row>
