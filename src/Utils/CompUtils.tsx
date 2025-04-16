@@ -99,6 +99,7 @@ export const ActionButton = (
     <button
       style={{ ...styles.button, ...(props.full ? styles.full : {}), backgroundColor: props.color ?? "#2ec0e8", ...(props.small ? {padding: 2} : {}) }}
       onClick={props.onPress} onTouchStart={props.onHold} onTouchEnd={props.onRelease} onTouchCancel={props.onRelease}
+      onContextMenu={(e) => e.preventDefault()}
     >
       {props.title}
     </button>
@@ -131,7 +132,9 @@ export const styles: Record<string, React.CSSProperties> = {
     color: "white",
     border: 0,
     padding: "7px 15px 7px 15px",
-    userSelect: "none"
+    userSelect: "none",
+    WebkitUserSelect: 'none',
+    touchAction: 'manipulation'
   },
   full: {
         height: "100%",
