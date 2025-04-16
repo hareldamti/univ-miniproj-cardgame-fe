@@ -80,14 +80,14 @@ export const ActionButton = (
     full?: boolean;
     small?: boolean;
     onPress?: React.MouseEventHandler;
-    onHold?: React.TouchEventHandler;
+    onTouchStart?: React.TouchEventHandler;
     onRelease?: React.TouchEventHandler;
   },
 ) => {
   return (
     <button
       style={{ ...styles.button, ...(props.full ? styles.full : {}), backgroundColor: props.color ?? "#2ec0e8", ...(props.small ? {padding: 2} : {}) }}
-      onClick={props.onPress} onTouchStart={props.onHold} onTouchEnd={props.onRelease} onTouchCancel={props.onRelease}
+      onClick={props.onPress} onTouchStart={props.onTouchStart} onTouchEnd={props.onRelease} onTouchCancel={props.onRelease}
       onContextMenu={(e) => e.preventDefault()}
     >
       {props.title}

@@ -6,20 +6,19 @@ import Recorder from 'recorder-js';
 
 export const VoiceChat = () => {
   const appState = useAppContext();
-  const [audioStream, setAudioStream] = useState<MediaStream | null>(null);
+  const [audioCtx, setAudioCtx] = useState<AudioContext>();
   const [isRecording, setIsRecording] = useState(false);
   const [recorder, setRecorder] = useState<Recorder>();
-  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+  const [debugMsg, setDebugMsg] = useState("");
   const startRecording = async() => {
+      recorder?.stop();
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       const audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
-      const recorder = new Recorder(audioCtx, {
-        onAnalysed: data => console.log('Analyzed:', data),
+      const _recorder = new Recorder(audioCtx, {
       });
-      setRecorder(recorder);
-      const audioChunks: Blob[] = [];
-      recorder.init(stream);
-      recorder.start();
+      setRecorder(_recorder);
+      _recorder.init(stream);
+      _recorder.start();
       
       setIsRecording(true);
   };
@@ -31,26 +30,42 @@ export const VoiceChat = () => {
     setIsRecording(false);
   };
 
+  const unlockAudio = () => {
+    const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
+    const audioCtx = new AudioContext();
+  
+    if (audioCtx.state === 'suspended') {
+      audioCtx.resume();
+    }
+    setAudioCtx(audioCtx);
+  };
+
+  const playAudioBlob = async (blob: Blob) => {
+    if (!audioCtx) return;
+    const arrayBuffer = await blob.arrayBuffer();
+    const buffer = await audioCtx.decodeAudioData(arrayBuffer);
+    const source = audioCtx.createBufferSource();
+    source.buffer = buffer;
+    source.connect(audioCtx.destination);
+    source.start(0);
+  };
+  
   useEffect(() => {
     if (!appState.socketHandler?.socket) { return; }
     appState.socketHandler?.socket.on(SocketTags.AUDIO, (props: { data: Blob; senderId: string }) => {
       if (appState.socketHandler?.socket.id === props.senderId) return;
-      const audioUrl = URL.createObjectURL(
-        new Blob([props.data], { type: "audio/webm" })
-      );
-      
-      const audio = new Audio(audioUrl);
-      audio
-        .play()
-        .catch((error) => console.error("Error playing audio:", error));
+      playAudioBlob(props.data);
+      //audio.play().catch((error) => setDebugMsg(msg => msg + "\n" + JSON.stringify(error)));
     });
 
     return () => {
       appState.socketHandler?.socket?.off(SocketTags.AUDIO);
+      recorder?.stop();
     };
   }, [appState]);
 
-  return (
-    <ActionButton full title={"🎙️"} color={!isRecording ? "red" : "#AA0000"} onHold={startRecording} onRelease={stopRecording}/>
+  return (<>
+    <ActionButton full title={"🎙️"} color={!isRecording ? "red" : "#AA0000"} onPress={ isRecording ? stopRecording : startRecording }/>
+    {debugMsg}</>
   );
 };
