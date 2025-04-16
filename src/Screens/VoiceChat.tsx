@@ -2,34 +2,33 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { ActionButton, Row, View } from "../Utils/CompUtils";
 import { useAppContext } from "../State/AppState";
 import { SocketTags } from "../package/Consts";
+import Recorder from 'recorder-js';
 
 export const VoiceChat = () => {
   const appState = useAppContext();
   const [audioStream, setAudioStream] = useState<MediaStream | null>(null);
   const [isRecording, setIsRecording] = useState(false);
-
+  const [recorder, setRecorder] = useState<Recorder>();
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
   const startRecording = async() => {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        audio: true,
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
+      const recorder = new Recorder(audioCtx, {
+        onAnalysed: data => console.log('Analyzed:', data),
       });
-      setAudioStream(stream);
-      const recorder = new MediaRecorder(stream, {
-        mimeType: "audio/webm",
-      });
+      setRecorder(recorder);
       const audioChunks: Blob[] = [];
-      recorder.ondataavailable = (e) => { audioChunks.push(e.data); };
-      recorder.onstop = () => {
-        const audioBlob = new Blob(audioChunks, { type: "audio/webm" });
-        audioChunks.length = 0;
-        appState.socketHandler?.socket.emit(SocketTags.AUDIO, audioBlob);
-      };
+      recorder.init(stream);
       recorder.start();
+      
       setIsRecording(true);
   };
 
-  const stopRecording = () => {
+  const stopRecording = async () => {
+    if (!recorder) {console.log("Stop recording but recorder is null");return;}
+    const { blob } = await recorder.stop();
+    appState.socketHandler?.socket.emit(SocketTags.AUDIO, blob);
     setIsRecording(false);
-    audioStream?.getTracks().forEach((track) => track.stop());
   };
 
   useEffect(() => {
@@ -52,6 +51,6 @@ export const VoiceChat = () => {
   }, [appState]);
 
   return (
-    <ActionButton full title={"🎙️"} color={!isRecording ? "red" : "#AA0000"} onPress={isRecording ? stopRecording : startRecording}/>
+    <ActionButton full title={"🎙️"} color={!isRecording ? "red" : "#AA0000"} onHold={startRecording} onRelease={stopRecording}/>
   );
 };

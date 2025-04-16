@@ -22,11 +22,9 @@ export default (props: {tradeOpen: boolean, setTradeOpen: React.Dispatch<React.S
         <Row span={2}>
             {gameState.players.filter(player => player.id != gameState.user.playerId).map(player => 
                 <Column span={1}>
-                    <View style={{justifyContent: 'center', alignItems: 'center', width: '100%', height: '100%'}}>
-                    <View onPress={()=>setOfferedUser(player.id)} style={{justifyContent: 'center', width: '90%', height: '90%', backgroundColor: colorByPlayer(player.id), borderWidth: player.id == offeredUser ? 5 : 0}}>
-                    <Text style={styles.textHeader}>
-                    {player.username}
-                </Text></View></View>
+                    <View style={{justifyContent: 'center', borderWidth: player.id == offeredUser ? 5 : 0, alignItems: 'center', width: '100%', height: '100%'}}>
+                    <ActionButton full title={player.username} color={colorByPlayer(player.id)} onPress={()=>setOfferedUser(player.id)}/>
+                    </View>
                 </Column>
             )}
         </Row>
