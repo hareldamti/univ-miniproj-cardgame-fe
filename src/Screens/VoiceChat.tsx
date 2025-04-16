@@ -6,6 +6,7 @@ import Recorder from 'recorder-js';
 
 export const VoiceChat = () => {
   const appState = useAppContext();
+  const {joinVoiceChat, leaveVoiceChat} = useVoiceChat(appState.socketHandler?.socket);
   const [audioCtx, setAudioCtx] = useState<AudioContext>();
   const [isRecording, setIsRecording] = useState(false);
   const [recorder, setRecorder] = useState<Recorder>();
@@ -65,7 +66,63 @@ export const VoiceChat = () => {
   }, [appState]);
 
   return (<>
-    <ActionButton full title={"🎙️"} color={!isRecording ? "red" : "#AA0000"} onPress={ isRecording ? stopRecording : startRecording }/>
+    <ActionButton full title={"🎙️"} color={!isRecording ? "red" : "#AA0000"} onPress={ isRecording ? leaveVoiceChat : joinVoiceChat }/>
     {debugMsg}</>
   );
 };
+
+export function useVoiceChat(socket: any) {
+  const recorderRef = useRef<Recorder | null>(null);
+  const audioContextRef = useRef<AudioContext | null>(null);
+  const streamRef = useRef<MediaStream | null>(null);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+
+  const joinVoiceChat = async () => {
+    const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
+    const audioCtx = new AudioContext();
+    audioContextRef.current = audioCtx;
+
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    streamRef.current = stream;
+
+    const input = audioCtx.createMediaStreamSource(stream);
+    const recorder = new Recorder(audioCtx);
+
+    await recorder.init(stream);
+    recorder.start();
+    recorderRef.current = recorder;
+
+    intervalRef.current = setInterval(() => {
+      recorderRef.current?.stop().then(({ blob }) => {
+        recorderRef.current?.start();
+        blob.arrayBuffer().then((buffer) => {
+          socket.emit(SocketTags.AUDIO, Array.from(new Uint8Array(buffer)));
+        });
+      });
+    }, 1000); // Send every 1 sec
+  };
+
+  const leaveVoiceChat = () => {
+    recorderRef.current?.stop();
+    recorderRef.current = null;
+
+    if (intervalRef.current) clearInterval(intervalRef.current);
+
+    streamRef.current?.getTracks().forEach((track) => track.stop());
+    streamRef.current = null;
+  };
+
+  useEffect(() => {
+    socket.on(SocketTags.AUDIO, async (props: { data: number[]; senderId: string }) => {
+      if (socket.id === props.senderId) return;
+
+      const array = new Uint8Array(props.data);
+      const blob = new Blob([array.buffer], { type: "audio/wav" }); // WAV for Recorder.js
+      const audioURL = URL.createObjectURL(blob);
+      const audio = new Audio(audioURL);
+      audio.play().catch(console.error);
+    });
+  }, [socket]);
+
+  return { joinVoiceChat, leaveVoiceChat };
+}
