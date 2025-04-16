@@ -16,6 +16,7 @@ export default function ChooseRoom() {
   const [roomStatus, setRoomStatus] = useState<Record<string, RoomDescription>>({});
   const navigate = useNavigate();
   useEffect(() => {
+    appState.page="lobby";
     if (!appState.username) navigate("/");
     appState.socketHandler = {
       socket: io(`${SOCKET_URL}`, {
@@ -35,7 +36,6 @@ export default function ChooseRoom() {
       {setRoomStatus(status); console.log("roomStatus", status);}
     );
     appState.socketHandler.socket.on(SocketTags.START, () => {
-      appState.page="match";
       navigate("/match");
     });
 
