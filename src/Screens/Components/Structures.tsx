@@ -90,9 +90,11 @@ export const Dice = (props: PressableSvg) =>
         {    [...Array(rows).keys()].map(n =>
                 <>
                     <circle cx={11}
+                        key={n}
                         cy={rows == 1 ? 0 : (n / (rows - 1) - 0.5) * 22}
                         r={5} strokeWidth={2}/>
                     <circle cx={-11}
+                        key={n + 5}
                         cy={rows == 1 ? 0 : (n / (rows - 1) - 0.5) * 22}
                         r={5} strokeWidth={2}/>
                 </>
