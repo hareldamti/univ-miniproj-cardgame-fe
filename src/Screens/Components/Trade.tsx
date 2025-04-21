@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useGameContext } from '../../State/GameState';
 import { styles, Row, Column, Frame, genIntKey, colorByPlayer, View, Text, ActionButton } from '../../Utils/CompUtils'
 import { Hexagonal, HexType, Resources } from '../../package/Entities/Models'
@@ -15,6 +15,7 @@ export default (props: {tradeOpen: boolean, setTradeOpen: React.Dispatch<React.S
     const [tradeOffer, setTradeOffer] = useState<Resources>(zeroCost);
     const [bankGive, setBankGive] = useState<Resources>(zeroCost);
     const [bankGet, setBankGet] = useState<Resources>(zeroCost);
+
     return <>
     {props.tradeOpen && <View style={styles.floatingTradeWindow}>
         <Row span={1}><Text style={styles.textBoldHeader}>Send a trade offer</Text></Row>
@@ -226,17 +227,17 @@ export default (props: {tradeOpen: boolean, setTradeOpen: React.Dispatch<React.S
         <Row span={2}>
         <Column span={1}>
         <ActionButton
-            title="Submit request"
-            disabled={!canBuy(gameState, gameState.user.playerId, tradeOffer)}
+            title="Trade bank"
+            disabled={!canBuy(gameState, gameState.user.playerId, subtractResources(bankGive, bankGet))}
             onPress={() => {
                 appState.socketHandler?.socket.emit(SocketTags.ACTION, {type: PlayerActionType.OfferTrade, trade: {offeredById: gameState.user.playerId, offeredToId: offeredUser, tradeDelta: subtractResources(bankGive, bankGet)}});
-                setTradeOffer(zeroCost); setOfferedUser(-1); props.setTradeOpen(false);
+                setBankGet(zeroCost); setBankGive(zeroCost); setOfferedUser(-1); props.setTradeOpen(false);
             }}/>
         </Column>
         <Column span={1}>
         <ActionButton
             title="Cancel"
-            onPress={() => {setTradeOffer(zeroCost); setOfferedUser(-1); props.setTradeOpen(false)}}/>
+            onPress={() => {setBankGet(zeroCost); setBankGive(zeroCost); setOfferedUser(-1); props.setTradeOpen(false)}}/>
         </Column>
         </Row>
         </>
