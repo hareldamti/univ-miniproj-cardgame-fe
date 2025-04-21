@@ -3,7 +3,7 @@ import { useGameContext } from '../../State/GameState';
 import { styles, Row, Column, Frame, genIntKey, colorByPlayer, View, Text, ActionButton } from '../../Utils/CompUtils'
 import { Hexagonal, HexType, Resources } from '../../package/Entities/Models'
 
-import { addResources, Brick, canBuy, Grain, Lumber, multiplyResources, negateResources, Ore, subtractResources, Wool, zeroCost } from '../../package/Logic/GameUtils';
+import { addResources, Brick, canBuy, Grain, isZeroResources, Lumber, multiplyResources, negateResources, Ore, subtractResources, Wool, zeroCost } from '../../package/Logic/GameUtils';
 import { useAppContext } from '../../State/AppState';
 import { BankTradePlayerId, SocketTags } from '../../package/Consts';
 import { PlayerAction, PlayerActionType } from '../../package/Entities/PlayerActions';
@@ -228,7 +228,7 @@ export default (props: {tradeOpen: boolean, setTradeOpen: React.Dispatch<React.S
         <Column span={1}>
         <ActionButton
             title="Trade bank"
-            disabled={!canBuy(gameState, gameState.user.playerId, subtractResources(bankGive, bankGet))}
+            disabled={!canBuy(gameState, gameState.user.playerId, subtractResources(bankGive, bankGet)) && !isZeroResources(bankGet) && !isZeroResources(bankGive)}
             onPress={() => {
                 appState.socketHandler?.socket.emit(SocketTags.ACTION, {type: PlayerActionType.OfferTrade, trade: {offeredById: gameState.user.playerId, offeredToId: offeredUser, tradeDelta: subtractResources(bankGive, bankGet)}});
                 setBankGet(zeroCost); setBankGive(zeroCost); setOfferedUser(-1); props.setTradeOpen(false);

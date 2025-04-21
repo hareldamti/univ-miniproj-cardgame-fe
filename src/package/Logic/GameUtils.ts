@@ -35,6 +35,8 @@ export const dotResources = (a: Resources, b: Resources): Resources => ({
 
 const legalPlayerResources = (a: Resources): boolean => Object.values(a).every(n => n >= 0);
 
+export const isZeroResources = (a: Resources): boolean => Object.values(a).every(n => n == 0);
+
 export const zeroCost: Resources = {
     lumber: 0,
     brick: 0,
