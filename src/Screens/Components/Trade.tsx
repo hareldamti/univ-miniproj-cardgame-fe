@@ -228,7 +228,7 @@ export default (props: {tradeOpen: boolean, setTradeOpen: React.Dispatch<React.S
         <Column span={1}>
         <ActionButton
             title="Trade bank"
-            disabled={!canBuy(gameState, gameState.user.playerId, subtractResources(bankGive, bankGet)) && !isZeroResources(bankGet) && !isZeroResources(bankGive)}
+            disabled={!canBuy(gameState, gameState.user.playerId, subtractResources(bankGive, bankGet)) || isZeroResources(bankGet) || isZeroResources(bankGive)}
             onPress={() => {
                 appState.socketHandler?.socket.emit(SocketTags.ACTION, {type: PlayerActionType.OfferTrade, trade: {offeredById: gameState.user.playerId, offeredToId: offeredUser, tradeDelta: subtractResources(bankGive, bankGet)}});
                 setBankGet(zeroCost); setBankGive(zeroCost); setOfferedUser(-1); props.setTradeOpen(false);
