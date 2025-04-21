@@ -1,5 +1,6 @@
 import { PropsWithChildren } from "react";
 import { DevelopmentCardTypes, HexType } from "../package/Entities/Models";
+import { BankTradePlayerId } from "../package/Consts";
 
 interface Span {
   span?: number;
@@ -241,7 +242,9 @@ export const colorByPlayer = (i?: number) => {
     case 2:
       return "#c4321b";
     case 3:
-      return "#0a0121";
+      return "#3d0bbd";
+    case BankTradePlayerId:
+      return "#d4b150";
     default:
       return "";
   }
