@@ -82,15 +82,18 @@ export const ActionButton = (
     onPress?: React.MouseEventHandler;
     onTouchStart?: React.TouchEventHandler;
     onRelease?: React.TouchEventHandler;
+    disabled?: boolean;
   },
 ) => {
   return (
     <button
-      style={{ ...styles.button, ...(props.full ? styles.full : {}), backgroundColor: props.color ?? "#2ec0e8", ...(props.small ? {padding: 2} : {}) }}
-      onClick={props.onPress} onTouchStart={props.onTouchStart} onTouchEnd={props.onRelease} onTouchCancel={props.onRelease}
+      style={{ ...styles.button, ...(props.full ? styles.full : {}), backgroundColor: props.disabled ? "gray" : (props.color ?? "#2ec0e8"), ...(props.small ? {padding: 2} : {}) }}
+      onClick={props.disabled ? undefined : props.onPress} onTouchStart={props.onTouchStart} onTouchEnd={props.onRelease} onTouchCancel={props.onRelease}
       onContextMenu={(e) => e.preventDefault()}
+      disabled={props.disabled}
     >
       {props.title}
+
     </button>
   );
 };

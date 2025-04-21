@@ -3,7 +3,7 @@ import { useGameContext } from '../../State/GameState';
 import { styles, Row, Column, Frame, genIntKey, colorByPlayer, View, Text, ActionButton } from '../../Utils/CompUtils'
 import { Hexagonal, HexType, Resources } from '../../package/Entities/Models'
 
-import { addResources, Brick, Grain, Lumber, Ore, subtractResources, Wool, zeroCost } from '../../package/Logic/GameUtils';
+import { addResources, Brick, canBuy, Grain, Lumber, negateResources, Ore, subtractResources, Wool, zeroCost } from '../../package/Logic/GameUtils';
 import { useAppContext } from '../../State/AppState';
 import { SocketTags } from '../../package/Consts';
 import { PlayerAction, PlayerActionType } from '../../package/Entities/PlayerActions';
@@ -115,6 +115,7 @@ export default (props: {tradeOpen: boolean, setTradeOpen: React.Dispatch<React.S
             <Column span={1}>
             <ActionButton
                 title="Submit request"
+                disabled={!canBuy(gameState, gameState.user.playerId, tradeOffer)}
                 onPress={() => {
                     if (offeredUser == -1) return;
                     appState.socketHandler?.socket.emit(SocketTags.ACTION, {type: PlayerActionType.OfferTrade, trade: {offeredById: gameState.user.playerId, offeredToId: offeredUser, tradeDelta: tradeOffer}});
@@ -132,7 +133,7 @@ export default (props: {tradeOpen: boolean, setTradeOpen: React.Dispatch<React.S
         <View style={styles.floatingAcceptTradeWindow}>
             <Row span={1}><Text style={styles.textBoldHeader}>Waiting for {gameState.players[trade.offeredToId].username} on:</Text></Row>
             <Row span={1}>
-            <Text style={styles.textHeader}>You give:</Text>
+            <Text style={styles.textHeader}>You get:</Text>
             </Row>
             <Row span={1}>
             {trade.tradeDelta.lumber < 0 && <Column span={1}>
@@ -157,7 +158,7 @@ export default (props: {tradeOpen: boolean, setTradeOpen: React.Dispatch<React.S
             </Column>}
         </Row>
         <Row span={1}>
-            <Text style={styles.textHeader}>You get:</Text>
+            <Text style={styles.textHeader}>You give:</Text>
         </Row>
         <Row span={1}>
             {trade.tradeDelta.lumber > 0 && <Column span={1}>
@@ -192,7 +193,7 @@ export default (props: {tradeOpen: boolean, setTradeOpen: React.Dispatch<React.S
         <View style={styles.floatingAcceptTradeWindow}>
             <Row span={1}><Text style={styles.textBoldHeader}>{gameState.players[trade.offeredById].username} wants to trade</Text></Row>
             <Row span={1}>
-            <Text style={styles.textHeader}>You get:</Text>
+            <Text style={styles.textHeader}>You give:</Text>
             </Row>
             <Row span={1}>
             {trade.tradeDelta.lumber < 0 && <Column span={1}>
@@ -217,7 +218,7 @@ export default (props: {tradeOpen: boolean, setTradeOpen: React.Dispatch<React.S
             </Column>}
         </Row>
         <Row span={1}>
-            <Text style={styles.textHeader}>You give:</Text>
+            <Text style={styles.textHeader}>You get:</Text>
         </Row>
         <Row span={1}>
             {trade.tradeDelta.lumber > 0 && <Column span={1}>
@@ -245,6 +246,7 @@ export default (props: {tradeOpen: boolean, setTradeOpen: React.Dispatch<React.S
             <Column span={1}>
             <ActionButton
                 title="Accept"
+                disabled={!canBuy(gameState, gameState.user.playerId, negateResources(trade.tradeDelta))}
                 onPress={() => appState.socketHandler?.socket.emit(SocketTags.ACTION, {type: PlayerActionType.RespondToTrade, accepted: true})}/>
             </Column>
             <Column span={1}>

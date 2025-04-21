@@ -299,9 +299,9 @@ export default (props: {
             <Column span={1}>
               <ActionButton
                 title={"Buy a card"}
-                color={canBuyCard ? "#2ec0e8" : "#999999"}
+                color={"#2ec0e8"}
+                disabled={!canBuyCard}
                 onPress={() =>
-                  canBuyCard &&
                   appState.socketHandler?.socket.emit(SocketTags.ACTION, {
                     type: PlayerActionType.DrawDevelopmentCard,
                   })
