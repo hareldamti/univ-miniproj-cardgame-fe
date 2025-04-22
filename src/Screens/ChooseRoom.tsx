@@ -100,9 +100,8 @@ export default function ChooseRoom() {
               <Row>
                 {Object.keys(partialBoards).map(i => {
                   return <Column>
-                  <Row><EmptyBoard board={initializeBoard(parseInt(i))}/></Row>
-                  <Row><ActionButton title={`${i + 1}`} onPress={() => setRoomLayout(parseInt(i))}/></Row>
-                    </Column>;
+                  <View style={parseInt(i) == roomLayout ? {backgroundColor: 'black'} : {}} onPress={() => setRoomLayout(parseInt(i))}><EmptyBoard board={initializeBoard(parseInt(i))}/></View>
+                  </Column>;
                 })}
               </Row>
               <Row>
