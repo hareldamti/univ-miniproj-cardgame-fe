@@ -33,7 +33,7 @@ export default function Match() {
     if (!appState.username) navigate("/");
   },[]);
   return (
-    <GameContextProvider initialState={initializeGame([])}>
+    <GameContextProvider initialState={initializeGame([], 0)}>
     <ServerLogic/>
     <View style={styles.container}>
       <Trade tradeOpen={tradeOpen} setTradeOpen={setTradeOpen}/>
