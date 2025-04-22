@@ -57,6 +57,7 @@ export function useVoiceChat(socket: any, setIsRecording: React.Dispatch<React.S
         socket.emit(SocketTags.AUDIO, Array.from(new Uint8Array(buffer)));
       });
     });
+    setIsRecording(false);
   }
 
   const leaveVoiceChat = () => {
