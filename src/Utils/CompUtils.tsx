@@ -271,6 +271,21 @@ export const colorByCard = (type: DevelopmentCardTypes) => {
   }
 }
 
+export const colorByResource = (resource: string) => {
+  switch (resource) {
+    case "lumber":
+      return hexagonalToColor(HexType.Forest);
+    case "brick":
+      return hexagonalToColor(HexType.Hill);
+    case "ore":
+      return hexagonalToColor(HexType.Mountain);
+    case "grain":
+      return hexagonalToColor(HexType.Field);
+    case "wool":
+      return hexagonalToColor(HexType.Pasture);
+  }
+};
+
 export const hexagonalToColor = (h: HexType) => {
   switch (h) {
     case HexType.Desert:

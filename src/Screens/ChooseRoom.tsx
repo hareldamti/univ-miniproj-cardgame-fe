@@ -30,7 +30,7 @@ export default function ChooseRoom() {
         },
       }),
     };
-    appState.socketHandler.socket.on('connect_error', () => {console.log("Failed to connect to server"); appState.socketHandler?.socket.disconnect();})
+    appState.socketHandler.socket.on('connect_error', () => {window.alert("Failed to connect to server"); appState.socketHandler?.socket.disconnect();})
 
     appState.socketHandler.socket.on(SocketTags.JOIN, (status: Record<string, RoomDescription>) =>
       {setRoomStatus(status); console.log("roomStatus", status);}
