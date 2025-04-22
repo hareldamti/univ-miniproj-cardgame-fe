@@ -106,6 +106,26 @@ export default (props: {availableVisible: Structure | null}) => {
     </svg>
   }
 
+export const EmptyBoard = (props: {board: Hexagonal[][]}) => {
+    return <svg style={styles.svg} viewBox="0 0 600 640">
+        {   // Hexagonals
+            Array.from<[number, Hexagonal[]]>(props.board.entries()).map(row => { const [rowIdx, tableRow] = row;
+                    return Array.from<[number, Hexagonal]>(tableRow.entries()).map(col => {
+                        const [colIdx, tableHex] = col;
+                        const [x, y] = hexCoords(rowIdx, colIdx);
+                        return <HexagonalComp
+                                    key={genIntKey()}
+                                    hexagonal={tableHex}
+                                    x={x}
+                                    y={y}
+                                    isMarked={false}
+                                /> } )
+                }
+            ).flat(1)
+        }
+    </svg>
+}
+
 const hexCoords = (rowIdx: number, colIdx: number) => [Math.abs(rowIdx - 3) * 50.0 + colIdx * 100, rowIdx * 85.0 + 60];
 const NodeCoords = (n: NodeLocation) => {
     let points = n.adjHex.map(coords => hexCoords(coords.row, coords.col));

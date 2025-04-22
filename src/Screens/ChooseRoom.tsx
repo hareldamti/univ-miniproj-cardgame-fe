@@ -7,6 +7,8 @@ import { useEffect, useState } from "react";
 import { SOCKET_URL } from "../Utils/ClientUtils";
 import { SocketTags } from "../package/Consts";
 import { useNavigate } from "react-router-dom";
+import { initializeBoard, partialBoards } from "../package/Logic/Initialization";
+import { EmptyBoard } from "./Components/Board";
 
 interface RoomDescription {users: string[], playing: boolean}
 
@@ -14,6 +16,7 @@ export default function ChooseRoom() {
   const appState = useAppContext();
   const [roomInput, setRoomInput] = useState<string>("");
   const [roomStatus, setRoomStatus] = useState<Record<string, RoomDescription>>({});
+  const [roomLayout, setRoomLayout] = useState<number>(0);
   const navigate = useNavigate();
   useEffect(() => {
     appState.page="lobby";
@@ -65,6 +68,7 @@ export default function ChooseRoom() {
       <ActionButton
       title="Create / join room"
       onPress={() => {
+        setRoomLayout(0);
         appState.roomId = roomInput;
         roomInput.length > 0 &&
           appState?.socketHandler?.socket.emit(SocketTags.JOIN, roomInput);
@@ -90,10 +94,22 @@ export default function ChooseRoom() {
             ))}
             {room.users.includes(appState.username ?? "") && (
               <>
+              <Row>
+                <Text>Choose layout</Text>
+              </Row>
+              <Row>
+                {Object.keys(partialBoards).map(i => {
+                  return <Column>
+                  <Row><EmptyBoard board={initializeBoard(parseInt(i))}/></Row>
+                  <Row><ActionButton title={`${i + 1}`} onPress={() => setRoomLayout(parseInt(i))}/></Row>
+                    </Column>;
+                })}
+              </Row>
+              <Row>
                 <ActionButton
                   title="Start game"
                   onPress={() => {
-                    appState?.socketHandler?.socket.emit(SocketTags.START);
+                    appState?.socketHandler?.socket.emit(SocketTags.START, roomLayout);
                   }}
                 />
                 <ActionButton
@@ -103,6 +119,7 @@ export default function ChooseRoom() {
                     appState?.socketHandler?.socket.emit(SocketTags.LEAVE, roomId);
                   }}
                 />
+                </Row>
               </>
             )}
             {Object.values(roomStatus).every(room => !room.users.includes(appState.username ?? "")) && !room.playing && (
@@ -110,6 +127,7 @@ export default function ChooseRoom() {
                 <ActionButton
                   title="Join room"
                   onPress={() => {
+                    setRoomLayout(0);
                     appState.roomId = roomId;
                     appState?.socketHandler?.socket.emit(SocketTags.JOIN, roomId);
                   }}
