@@ -27,8 +27,8 @@ export const partialBoards = [
             { type: HexType.Sea, nuOfPoints: 0 },
             { type: HexType.Field, nuOfPoints: 10 },
             { type: HexType.Mountain, nuOfPoints: 11 },
-            { type: HexType.Forest, nuOfPoints: 3 },
             { type: HexType.Pasture, nuOfPoints: 12 },
+            { type: HexType.Forest, nuOfPoints: 3 },
             { type: HexType.Sea, nuOfPoints: 0 },
         ],
         // Fourth row (7 hexagons)
