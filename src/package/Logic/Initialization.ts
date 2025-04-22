@@ -76,16 +76,16 @@ export const partialBoards = [
             // Second row (5 hexagons)
             [
                 { type: HexType.Sea, nuOfPoints: 0 },
-                { type: HexType.Hill, nuOfPoints: 8 },
+                { type: HexType.Mountain, nuOfPoints: 6 },
                 { type: HexType.Pasture, nuOfPoints: 4 },
-                { type: HexType.Hill, nuOfPoints: 11 },
+                { type: HexType.Mountain, nuOfPoints: 11 },
                 { type: HexType.Sea, nuOfPoints: 0 },
             ],
             // Third row (6 hexagons)
             [
                 { type: HexType.Sea, nuOfPoints: 0 },
                 { type: HexType.Field, nuOfPoints: 10 },
-                { type: HexType.Mountain, nuOfPoints: 11 },
+                { type: HexType.Hill, nuOfPoints: 11 },
                 { type: HexType.Forest, nuOfPoints: 3 },
                 { type: HexType.Pasture, nuOfPoints: 12 },
                 { type: HexType.Sea, nuOfPoints: 0 },
@@ -93,17 +93,17 @@ export const partialBoards = [
             // Fourth row (7 hexagons)
             [
                 { type: HexType.Sea, nuOfPoints: 0 },
-                { type: HexType.Forest, nuOfPoints: 5 },
+                { type: HexType.Field, nuOfPoints: 2 },
                 { type: HexType.Hill, nuOfPoints: 9 },
                 { type: HexType.Desert, nuOfPoints: 0 },
-                { type: HexType.Mountain, nuOfPoints: 6 },
+                { type: HexType.Hill, nuOfPoints: 8 },
                 { type: HexType.Field, nuOfPoints: 9 },
                 { type: HexType.Sea, nuOfPoints: 0 },
             ],
             // Fifth row (6 hexagons)
             [
                 { type: HexType.Sea, nuOfPoints: 0 },
-                { type: HexType.Field, nuOfPoints: 2 },
+                { type: HexType.Pasture, nuOfPoints: 3 },
                 { type: HexType.Mountain, nuOfPoints: 4 },
                 { type: HexType.Field, nuOfPoints: 5 },
                 { type: HexType.Forest, nuOfPoints: 10 },
@@ -112,8 +112,8 @@ export const partialBoards = [
             // Sixth row (5 hexagons)
             [
                 { type: HexType.Sea, nuOfPoints: 0 },
+                { type: HexType.Forest, nuOfPoints: 5 },
                 { type: HexType.Forest, nuOfPoints: 6 },
-                { type: HexType.Pasture, nuOfPoints: 3 },
                 { type: HexType.Pasture, nuOfPoints: 8 },
                 { type: HexType.Sea, nuOfPoints: 0 },
             ],
@@ -144,37 +144,37 @@ export const partialBoards = [
             // Third row (6 hexagons)
             [
                 { type: HexType.Sea, nuOfPoints: 0 },
+                { type: HexType.Pasture, nuOfPoints: 3 },
+                { type: HexType.Pasture, nuOfPoints: 8 },
                 { type: HexType.Field, nuOfPoints: 10 },
                 { type: HexType.Mountain, nuOfPoints: 11 },
-                { type: HexType.Forest, nuOfPoints: 3 },
-                { type: HexType.Pasture, nuOfPoints: 12 },
                 { type: HexType.Sea, nuOfPoints: 0 },
             ],
             // Fourth row (7 hexagons)
             [
                 { type: HexType.Sea, nuOfPoints: 0 },
-                { type: HexType.Forest, nuOfPoints: 5 },
-                { type: HexType.Hill, nuOfPoints: 9 },
+                { type: HexType.Field, nuOfPoints: 5 },
+                { type: HexType.Forest, nuOfPoints: 10 },
                 { type: HexType.Desert, nuOfPoints: 0 },
+                { type: HexType.Pasture, nuOfPoints: 12 },
                 { type: HexType.Mountain, nuOfPoints: 6 },
-                { type: HexType.Field, nuOfPoints: 9 },
                 { type: HexType.Sea, nuOfPoints: 0 },
             ],
             // Fifth row (6 hexagons)
             [
                 { type: HexType.Sea, nuOfPoints: 0 },
                 { type: HexType.Field, nuOfPoints: 2 },
+                { type: HexType.Forest, nuOfPoints: 3 },
                 { type: HexType.Mountain, nuOfPoints: 4 },
-                { type: HexType.Field, nuOfPoints: 5 },
-                { type: HexType.Forest, nuOfPoints: 10 },
+                { type: HexType.Field, nuOfPoints: 9 },
                 { type: HexType.Sea, nuOfPoints: 0 },
             ],
             // Sixth row (5 hexagons)
             [
                 { type: HexType.Sea, nuOfPoints: 0 },
+                { type: HexType.Forest, nuOfPoints: 5 },
+                { type: HexType.Hill, nuOfPoints: 9 },
                 { type: HexType.Forest, nuOfPoints: 6 },
-                { type: HexType.Pasture, nuOfPoints: 3 },
-                { type: HexType.Pasture, nuOfPoints: 8 },
                 { type: HexType.Sea, nuOfPoints: 0 },
             ],
             // Seventh row (4 hexagons)
